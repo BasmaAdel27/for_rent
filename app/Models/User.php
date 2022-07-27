@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name','email','password','type','status','phone','gender','image'
+
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+   public function advertisement(){
+       return $this->hasMany(Advertisement::class,'user_id','id');
+   }
+
+    public function comment(){
+        return $this->hasMany(Comment::class,'user_id','id');
+    }
+    public function contact_us(){
+        return $this->hasMany(Contact_us::class , 'contact_us_id','id');
+    }
+    public function favourit(){
+        return $this->hasMany(Favourit::class , 'user_id','id');
+    }
+
+    public function rating(){
+        return $this->hasMany(Rating::class , 'user_id','id');
+    }
+
+}
