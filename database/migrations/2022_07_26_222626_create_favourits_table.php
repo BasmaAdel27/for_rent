@@ -15,8 +15,6 @@ return new class extends Migration
     {
         Schema::create('favourits', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('advertisement_id')->unsigned();
             $table->foreignId('advertisement_id')
                   ->constrained()
                   ->onUpdate('cascade')

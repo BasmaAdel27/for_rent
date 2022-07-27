@@ -16,8 +16,6 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->string('comment');
-            $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('advertisement_id')->unsigned();
             $table->foreignId('user_id')
                   ->constrained()
                   ->onUpdate('cascade')

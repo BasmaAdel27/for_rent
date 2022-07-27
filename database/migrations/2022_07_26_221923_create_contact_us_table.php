@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('phone');
             $table->text('description');
             $table->string('url');
-            $table->bigInteger('user_id')->unsigned();
             $table->foreignId('user_id')
                 ->constrained()
                 ->onUpdate('cascade')

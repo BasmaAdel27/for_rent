@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('image_name');
             $table->string('video')->nullable();
-            $table->bigInteger('advertisement_id')->unsigned();
             $table->foreignId('advertisement_id')
                   ->constrained()
                   ->onUpdate('cascade')

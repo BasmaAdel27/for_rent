@@ -16,9 +16,8 @@ return new class extends Migration
         Schema::create('contact_us_files', function (Blueprint $table) {
             $table->id();
             $table->string('file_name');
-            $table->bigInteger('contact_us_id')->unsigned();
-            $table->foreignId('contact_us_id')
-                  ->constrained()
+            $table->foreignId('contactus_id')
+                ->references('id')->on('contact_us')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
             $table->timestamps();

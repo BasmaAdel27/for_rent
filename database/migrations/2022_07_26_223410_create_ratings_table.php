@@ -15,8 +15,6 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('owner_id')->unsigned();
             $table->integer('count');
             $table->foreignId('user_id')
                   ->constrained()

@@ -27,7 +27,6 @@ return new class extends Migration
             $table->enum('status',['not rented','rented']);
             $table->float('area');
             $table->softDeletes();
-            $table->bigInteger('user_id')->unsigned();
             $table->foreignId('user_id')
                   ->constrained()
                   ->onUpdate('cascade')
