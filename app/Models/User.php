@@ -49,7 +49,7 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class,'user_id','id');
     }
     public function contact_us(){
-        return $this->hasMany(Contact_us::class , 'contact_us_id','id');
+        return $this->hasMany(Contact_us::class , 'user_id','id');
     }
     public function favourit(){
         return $this->hasMany(Favourit::class , 'user_id','id');
