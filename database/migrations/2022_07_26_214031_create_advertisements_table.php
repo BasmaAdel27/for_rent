@@ -26,6 +26,9 @@ return new class extends Migration
             $table->enum('type',['apartment','room','studio']);
             $table->enum('status',['not rented','rented']);
             $table->float('area');
+            $table->string('address');
+            $table->string('Latitude');
+            $table->string('Longitude');
             $table->softDeletes();
             $table->foreignId('user_id')
                   ->constrained()
