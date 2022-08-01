@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/verify/{verification_code}', [\App\Http\Controllers\API\AuthController::class,'verifyUser'])->name('user.verify');
 
 Auth::routes();
 

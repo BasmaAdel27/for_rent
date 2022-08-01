@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('level');
             $table->enum('furniture',['yes','no']);
             $table->enum('type',['apartment','room','studio']);
-            $table->enum('status',['not rented','rented']);
+            $table->enum('status',['not rented','rented'])->default('not rented');
             $table->float('area');
             $table->string('address');
             $table->string('Latitude');
