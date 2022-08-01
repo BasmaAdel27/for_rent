@@ -10,6 +10,10 @@ class Advertisement extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    protected $fillable = [
+        'title','description','price','bedroom_num','bathroom_num','beds_num','level','image','furniture','type','status','area', 'address','Latitude','Longitude'
+
+    ];
 
     public function user()
     {
