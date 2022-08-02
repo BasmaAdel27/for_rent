@@ -34,9 +34,7 @@ Route::middleware(['owner','auth:api'])->group(function () {
 
 //middleware for renter
 Route::middleware(['renter','auth:api'])->group(function () {
-    Route::get('/', function () {
-        return auth()->user();
-    });
+
 });
 
 Route::middleware(['auth:api'])->group(function () {
