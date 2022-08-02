@@ -50,11 +50,11 @@ Route::post('/verify',[AuthController::class,'verifyUser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
 //Route::post('/refresh', 'refresh');
+
 ///////////////////////////////////Advertisement owner routes///////////////////////////////
 Route::post('/advertisement',[AdvertisementController::class,'create']);
 Route::post('/advertisement/{id}',[AdvertisementController::class,'update']);
 Route::post('/advertisement_image',[Advertisement_imageController::class,'store']);
-
 Route::get('/advertisement_image/{id}',[Advertisement_imageController::class,'destroy']);
 Route::get('/notrented_advertisement',[AdvertisementController::class,'not_rented']);
 Route::get('/rented_advertisement',[AdvertisementController::class,'rented']);
