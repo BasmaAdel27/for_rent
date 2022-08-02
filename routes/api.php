@@ -49,7 +49,6 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/verify',[AuthController::class,'verifyUser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
-
 //Route::post('/refresh', 'refresh');
 ///////////////////////////////////Advertisement owner routes///////////////////////////////
 Route::post('/advertisement',[AdvertisementController::class,'create']);
@@ -68,9 +67,7 @@ Route::get('/declined_advertisement',[AdvertisementController::class,'declined']
 
 
 
-
 Route::post('/password/reset', [ResetPasswordController::class,'reset']);
-
 
 
 
