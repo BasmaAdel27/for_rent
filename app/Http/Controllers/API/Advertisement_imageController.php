@@ -14,10 +14,7 @@ use App\Models\Advertisement_image;
 
 class Advertisement_imageController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -44,7 +41,7 @@ class Advertisement_imageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request ){
+    public function store(Request $request , $id){
 
        
 
@@ -52,7 +49,6 @@ class Advertisement_imageController extends Controller
         $validator =Validator::make($request->all(),[
         'image_name' => 'required|array|nullable',
         'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
-        "advertisement_id" => "required",
         ],[
             "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
             "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
@@ -69,22 +65,21 @@ class Advertisement_imageController extends Controller
             $ad_image = [];
             foreach($request->file('image_name') as $image)
             {
-                $destinationPath = 'public/images/';
+                $destinationPath = public_path('images/advertisement_images');
                 $Extension = $image->getClientOriginalExtension();
                 $filename=mt_rand(100000000,99999999999999). "." . $Extension;
                 $image->move($destinationPath, $filename);
                
                 $ad_image []= Advertisement_image::create([
                     "image_name" =>  $filename,
-                    "advertisement_id"=> $request->advertisement_id
+                    "advertisement_id"=>$id
                 ]);
                 
-                // new Advertisement_image([
-                //     "image_name" =>  $filename,
-                //     "advertisement_id"=> $request->advertisement_id
-                // ]);
+                
 
             }
+            return response()->json("success");
+
             $advertisement->advertisement_image()->saveMany($ad_image);
 
  
@@ -127,58 +122,51 @@ class Advertisement_imageController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $advertisement = Advertisement::find($id);
+    $images =  $advertisement->advertisement_image()->get();
+    // return response()->json($images);
 
-
-        // $validator =Validator::make($request->all(),[
-        //     'image_name' => 'required|array|nullable',
-        //     'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
-        //     "advertisement_id" => "required",
-        //     ],[
-        //         "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
-        //         "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
-        //         "image_name.mimes" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
-        //     ]);
-        //     if ($validator->fails()) {
-        //         return response()->json(['error'=>$validator->errors()], 401);
-        //     }
+        $validator =Validator::make($request->all(),[
+            'image_name' => 'required|array|nullable',
+            'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
+            ],[
+                "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
+                "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
+                "image_name.mimes" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['error'=>$validator->errors()], 401);
+            }
         //     ///////////////image stores///////////////////////
-        //     $images = DB::table('advertisements')
-        //     ->join('advertisements_images', 'advertisements.id', '=', 'advertisements_images.advertisement_id')
-            
-        //     ->select('advertisements_images.*')
-        //     ->get();
+       
+    //    }
+
+
+    $advertisement = Advertisement::findOrFail($id);
+        $input = $request->all();
+        $photos = $request->file('image_name');
+        $advertisement->advertisement_image()->delete();
+
+
+        foreach ($photos as $photo) {
            
-           
-        //     $advertisement = new Advertisement;
-        //     if($request->hasFile('image_name'))
-        //     {
-        //         $ad_image = [];
-        //         foreach($request->file('image_name') as $image)
-        //         {
-        //             $destinationPath = 'public/images/';
-        //             $Extension = $image->getClientOriginalExtension();
-        //             $filename=mt_rand(100000000,99999999999999). "." . $Extension;
-        //             $image->move($destinationPath, $filename);
-                   
-        //             $ad_image []= $images->toQuery()->update(array(
-        //                 "image_name" =>  $filename,
-        //                 "advertisement_id"=> $request->advertisement_id
-        //                 )
-        //             );
-                    
-        //             // new Advertisement_image([
-        //             //     "image_name" =>  $filename,
-        //             //     "advertisement_id"=> $request->advertisement_id
-        //             // ]);
-    
-        //         }
-        //         $advertisement->advertisement_image()->saveMany($ad_image);
-        //         return response()->json("success", 200);
-    
-        // }
+
+            $Extension = $photo->getClientOriginalExtension();
+            $filename=mt_rand(100000000,99999999999999). "." . $Extension;
+            $photo->storeAs(public_path('images/owner_profile_images'), $filename);
+
+            $adPhoto = new Advertisement_image;
+            $adPhoto->advertisement_id = $advertisement->id;
+           $ad_img[]= $adPhoto->image_name   = $filename;
+            $adPhoto->save();
+
+
+        }
+        
+       return response()->json("updated successfully");
         
         
-    }
+     }
 
     /**
      * Remove the specified resource from storage.
@@ -188,14 +176,10 @@ class Advertisement_imageController extends Controller
      */
     public function destroy($id)
     {
-        // $images = DB::table('advertisements')
-        //     ->join('advertisements_images', 'advertisements.id', '=', 'advertisements_images.advertisement_id')
-            
-        //     ->select('advertisements_images.*')
-        //     ->delete();
-          $advertisements= Advertisement::find($id);
-          
-          $advertisements->advertisement_image()-delete();
+        $advertisement = Advertisement::findOrFail($id);
+
+        $advertisement->advertisement_image()->delete();
+
 
     }
 }

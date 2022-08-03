@@ -4,11 +4,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ResetPasswordController;
+<<<<<<< HEAD
 use App\Http\Controllers\API\AdvertisementController;
 use App\Http\Controllers\Api\Advertisement_imageController;
 use App\Http\Controllers\API\RateController;
 use App\Http\Controllers\API\FavouriteController;
 use App\Http\Controllers\API\admin\AdminAdvertisementController;
+=======
+use App\Http\Controllers\api\AdvertisementController;
+use App\Http\Controllers\api\Advertisement_imageController;
+use App\Http\Controllers\api\CommentsController;
+use App\Http\Controllers\api\OwnerprofileController;
+use App\Http\Controllers\api\OwnerprofilesettinController;
+>>>>>>> 9a8347e7989830672671465bfd95f7c1382becec
 
 
 /*
@@ -38,8 +46,35 @@ Route::middleware(['Admin','auth:api'])->group(function () {
 
 });
 
+Route::middleware(['renter','auth:api'])->group(function () {
+    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
+    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
+
+
+});
+Route::get('/owner_profile_setting',[OwnerprofilesettinController::class,'index']);
+
 //middleware for owner
 Route::middleware(['owner','auth:api'])->group(function () {
+    Route::post('/advertisement',[AdvertisementController::class,'create']);
+Route::post('/advertisement/{id}',[AdvertisementController::class,'update']);
+Route::get('/notrented_advertisement',[AdvertisementController::class,'not_rented']);
+Route::get('/rented_advertisement',[AdvertisementController::class,'rented']);
+Route::get('/pending_advertisement',[AdvertisementController::class,'pending']);
+Route::get('/accepted_advertisement',[AdvertisementController::class,'accepted']);
+Route::post('/s_advertisement_image/{id}',[Advertisement_imageController::class,'store']);
+
+Route::post('/u_advertisement_image/{id}',[Advertisement_imageController::class,'update']);
+Route::get('/advertisement_image/{id}',[Advertisement_imageController::class,'destroy']);
+
+
+Route::get('/declined_advertisement',[AdvertisementController::class,'declined']);
+Route::get('/owner_profile',[OwnerprofileController::class,'index']);
+Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
+Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
+
+
+
 
 });
 
@@ -68,16 +103,8 @@ Route::post('/password/email', [ResetPasswordController::class,'getResetToken'])
 //Route::post('/refresh', 'refresh');
 
 ///////////////////////////////////Advertisement owner routes///////////////////////////////
-Route::post('/advertisement',[AdvertisementController::class,'create']);
-Route::post('/advertisement/{id}',[AdvertisementController::class,'update']);
-Route::post('/advertisement_image',[Advertisement_imageController::class,'store']);
-Route::get('/advertisement_image/{id}',[Advertisement_imageController::class,'destroy']);
-Route::get('/notrented_advertisement',[AdvertisementController::class,'not_rented']);
-Route::get('/rented_advertisement',[AdvertisementController::class,'rented']);
-Route::get('/pending_advertisement',[AdvertisementController::class,'pending']);
-Route::get('/accepted_advertisement',[AdvertisementController::class,'accepted']);
 
-Route::get('/declined_advertisement',[AdvertisementController::class,'declined']);
+
 
 
 

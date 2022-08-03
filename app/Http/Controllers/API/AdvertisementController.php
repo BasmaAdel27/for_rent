@@ -176,6 +176,7 @@ class AdvertisementController extends Controller
         //
     }
 
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -186,6 +187,9 @@ class AdvertisementController extends Controller
     {
         //
     }
+      
+    
+    /////////////////////////////UPDATE/////////////////////////////////////////////
 
     /**
      * Update the specified resource in storage.
@@ -195,7 +199,8 @@ class AdvertisementController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    { 
+        
 
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10|unique:advertisements|max:200',
@@ -258,9 +263,9 @@ class AdvertisementController extends Controller
         }
     /////////////store in databasee////////////////////////////////
     $user = Auth::user();
-    $id = Auth::id();
+   
         $advertisement= Advertisement::find($id);
-        Auth::user()->advertisement()->update([
+        $advertisement->update([
             "title" =>$request->title,
         "description" => $request->description,
        "bedroom_num" => $request->bedroom_num,
@@ -273,9 +278,10 @@ class AdvertisementController extends Controller
         "address" => $request->address,
         "Latitude" => $request->Latitude,
         "Longitude" => $request->Longitude,
+        "control" => "pending",
         "price"=>$request->price]);
         //update
-       return response()->json( $advertisement);
+       return response()->json( [$advertisement , "user"=>Auth::user()]);
     }
 
     /**
