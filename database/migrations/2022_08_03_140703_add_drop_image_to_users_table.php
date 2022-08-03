@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->timestamps();
-
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('image');
         });
     }
 
@@ -26,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('image');
         });
     }
 };

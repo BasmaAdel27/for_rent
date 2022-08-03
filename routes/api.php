@@ -6,6 +6,9 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\AdvertisementController;
 use App\Http\Controllers\Api\Advertisement_imageController;
+use App\Http\Controllers\API\RateController;
+use App\Http\Controllers\API\FavouriteController;
+use App\Http\Controllers\API\admin\AdminAdvertisementController;
 
 
 /*
@@ -25,6 +28,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //middleware for admin
 Route::middleware(['Admin','auth:api'])->group(function () {
+    Route::get('/admin/pendingAdvertisement',[AdminAdvertisementController::class,'pendingRequest']);
+    Route::get('/admin/acceptedAdvertisement',[AdminAdvertisementController::class,'acceptedRequest']);
+    Route::get('/admin/declinedAdvertisement',[AdminAdvertisementController::class,'declinedRequest']);
+    Route::delete('/admin/deleteAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'destroy']);
+    Route::get('/admin/showAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'showRequest']);
+    Route::put('/admin/confirmAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'confirmRequest']);
+    Route::put('/admin/rejectedAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'rejectedRequest']);
+
 });
 
 //middleware for owner
@@ -34,6 +45,13 @@ Route::middleware(['owner','auth:api'])->group(function () {
 
 //middleware for renter
 Route::middleware(['renter','auth:api'])->group(function () {
+    //rating
+    Route::post('/rate/store/{advertisement_id}',[RateController::class,'store']);
+    Route::get('/rate/delete/{advertisement_id}/{rate_id}',[RateController::class,'destroy']);
+    //favourite
+    Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
+
+
 
 });
 

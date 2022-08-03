@@ -69,7 +69,7 @@ class AuthController extends Controller
                 'email' => 'required|string|email|max:255|unique:users',
                 'type'=>'required',
                 'phone'=>'required|min:11|numeric|unique:users|regex:/^01[0125][0-9]{8}$/',
-                'image'=>'required|image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+                'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
                 'gender'=>'required',
                 'password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
             ], [
@@ -94,12 +94,15 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
+        if ($request->image != null) {
             //image validation
-        $strToArr = explode(".", $_FILES["image"]["name"]);
-        $extension=end($strToArr);
-        $newimagename = round(microtime(true)). '.' .$extension;
-        $request->image->move(public_path('images'), $newimagename);
-
+            $strToArr = explode(".", $_FILES["image"]["name"]);
+            $extension = end($strToArr);
+            $newimagename = round(microtime(true)) . '.' . $extension;
+            $request->image->move(public_path('images'), $newimagename);
+        }else{
+            $newimagename=null;
+        }
            //name and email variable
         $name=$request->name;
         $email=$request->email;
@@ -114,6 +117,15 @@ class AuthController extends Controller
             'image'=>$newimagename,
             'password' => Hash::make($request->password),
         ]);
+
+        if ($user->image==null && $user->gender== 'female'){
+            $user->image='girl.jpg';
+            $user->save();
+        }elseif ($user->image==null && $user->gender== 'male'){
+            $user->image='male.jpg';
+            $user->save();
+        }
+
 
             //mail verification
         $verification_code =random_int(100000, 999999);//Generate verification code
