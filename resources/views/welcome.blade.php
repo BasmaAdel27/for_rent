@@ -19,6 +19,27 @@
                 font-family: 'Nunito', sans-serif;
             }
         </style>
+
+<script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+<script>
+
+  // Enable pusher logging - don't include this in production
+  Pusher.logToConsole = true;
+
+  var pusher = new Pusher('92b04b6b578dc942812a', {
+    cluster: 'eu'
+  });
+
+  var channel = pusher.subscribe('my-channel');
+  channel.bind('my-event', function(data) {
+    alert(JSON.stringify(data));
+  });
+</script>
+
+
+
+
+
     </head>
     <body class="antialiased">
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
