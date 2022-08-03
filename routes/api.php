@@ -4,19 +4,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ResetPasswordController;
-<<<<<<< HEAD
 use App\Http\Controllers\API\AdvertisementController;
 use App\Http\Controllers\Api\Advertisement_imageController;
 use App\Http\Controllers\API\RateController;
 use App\Http\Controllers\API\FavouriteController;
 use App\Http\Controllers\API\admin\AdminAdvertisementController;
-=======
-use App\Http\Controllers\api\AdvertisementController;
-use App\Http\Controllers\api\Advertisement_imageController;
 use App\Http\Controllers\api\CommentsController;
 use App\Http\Controllers\api\OwnerprofileController;
 use App\Http\Controllers\api\OwnerprofilesettinController;
->>>>>>> 9a8347e7989830672671465bfd95f7c1382becec
 
 
 /*
@@ -52,7 +47,6 @@ Route::middleware(['renter','auth:api'])->group(function () {
 
 
 });
-Route::get('/owner_profile_setting',[OwnerprofilesettinController::class,'index']);
 
 //middleware for owner
 Route::middleware(['owner','auth:api'])->group(function () {
