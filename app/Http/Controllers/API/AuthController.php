@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use http\Env\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,10 +25,10 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $validator =Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string|exists:users|email',
             'password' => 'required|string|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
-        ],[
+        ], [
             'email.required' => 'برجاء ادخال البريد الإلكتروني ',
             'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
             "email.exists" => "البريد الالكتروني غير موجود",
@@ -36,31 +37,39 @@ class AuthController extends Controller
 
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 401);
         }
         $credentials = $request->only('email', 'password');
 
         $token = Auth::attempt($credentials);
-        if (!$token) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'غير مصرح لك بالدخول',
-            ], 401);
-        }
-        elseif ($token && \auth()->user()->email_verified_at !=null) {
-            $user = Auth::user();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'تم تسجيل الدخول بنجاح',
-                'user' => $user,
-                'authorisation' => [
-                    'token' => $token,
-                    'type' => 'bearer',
-                ]
-            ]);
+        if ($request->user()->status == 'is_active') {
+//            dd('d');
+            if (!$token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'غير مصرح لك بالدخول',
+                ], 401);
+            } elseif ($token && \auth()->user()->email_verified_at != null) {
+                $user = Auth::user();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'تم تسجيل الدخول بنجاح',
+                    'user' => $user,
+                    'authorisation' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ]
+                ]);
+            }else{
+                return Response()->json(['message' => 'برجاء تفعيل بريدك الالكتروني ']);
+
+            }
+        } else {
+            return Response()->json(['message' => 'هذا البريد الالكتروني تم حظره من قبل الاداره']);
         }
     }
 
+//
     public function register(Request $request){
             //validation
         $validator =Validator::make($request->all(),

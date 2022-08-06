@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('type',['admin','owner','renter']);
+            $table->enum('type',['superAdmin','admin','owner','renter']);
             $table->enum("status", ["is_active", "is_blocked"])->default('is_active');
             $table->string('phone')->unique();
             $table->enum('gender', ['female', 'male']);
