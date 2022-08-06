@@ -153,7 +153,9 @@ class Advertisement_imageController extends Controller
 
             $Extension = $photo->getClientOriginalExtension();
             $filename=mt_rand(100000000,99999999999999). "." . $Extension;
-            $photo->storeAs(public_path('images/owner_profile_images'), $filename);
+            $destinationPath = public_path('images/advertisement_images');
+
+            $photo->move( $destinationPath, $filename);
 
             $adPhoto = new Advertisement_image;
             $adPhoto->advertisement_id = $advertisement->id;

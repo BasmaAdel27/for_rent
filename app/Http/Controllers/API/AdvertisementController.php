@@ -7,7 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Notification;
+
 use App\Models\Advertisement;
+use App\Events\AddAdvertisement;
+use Illuminate\Support\Carbon;
+
 
 
 
@@ -114,6 +119,21 @@ class AdvertisementController extends Controller
         "price"=>$request->price
     ]);
     
+    $add_advertisement_data=[
+        "advertisement" => $advertisement,
+        "message"=>" تم اضافة اعلان من قبل المالك " . Auth::user()->name ."في انتظار موافقتك",
+        "time" => carbon::now()
+    ];
+    event(new AddAdvertisement($add_advertisement_data));
+    /////////store in table notification///////////
+    $notification = New Notification ;
+    $notification->user_id = 5;    ///////////ADMIN ID///////////
+    $notification->advertisement_id = $advertisement->id;
+    $notification->content = $add_advertisement_data["message"];
+    $notification->status = "not_red";
+    $notification->sent_at =$add_advertisement_data["time"];
+    $notification->save();
+
     return response()->json( $advertisement);
 
     }

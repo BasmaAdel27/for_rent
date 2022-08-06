@@ -36,5 +36,8 @@ class Advertisement extends Model
     public function ratings(){
         return $this->hasMany(Rating::class,'advertisement_id','id');
     }
+    public function notification(){
+        return $this->hasMany(Notification::class , 'advertisement_id','id');
+    }
 
 }

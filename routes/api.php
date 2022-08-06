@@ -12,6 +12,7 @@ use App\Http\Controllers\API\admin\AdminAdvertisementController;
 use App\Http\Controllers\api\CommentsController;
 use App\Http\Controllers\api\OwnerprofileController;
 use App\Http\Controllers\api\OwnerprofilesettinController;
+use App\Http\Controllers\api\GetNotificationController;
 
 
 /*
@@ -41,12 +42,7 @@ Route::middleware(['Admin','auth:api'])->group(function () {
 
 });
 
-Route::middleware(['renter','auth:api'])->group(function () {
-    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
-    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 
-
-});
 
 //middleware for owner
 Route::middleware(['owner','auth:api'])->group(function () {
@@ -79,6 +75,8 @@ Route::middleware(['renter','auth:api'])->group(function () {
     Route::get('/rate/delete/{advertisement_id}/{rate_id}',[RateController::class,'destroy']);
     //favourite
     Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
+    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
+    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 
 
 
@@ -86,6 +84,10 @@ Route::middleware(['renter','auth:api'])->group(function () {
 
 Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
+    Route::get('/get_notification', [GetNotificationController::class,'view']);
+
+
+
 
 });
 

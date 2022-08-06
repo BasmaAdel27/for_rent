@@ -4,6 +4,11 @@ namespace App\Http\Controllers\API\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Advertisement;
+use Illuminate\Support\Carbon;
+use App\Events\ConfirmOwnerRequestFromAdmin;
+use App\Models\Notification;
+
+
 
 class AdminAdvertisementController extends Controller
 {
@@ -36,13 +41,34 @@ class AdminAdvertisementController extends Controller
     }
 
     public function confirmRequest(Advertisement $advertisement_id){
+
+       
         $advertisement=Advertisement::with('user')->find($advertisement_id->id);
 //        dd($advertisement->control);
         if ($advertisement->control == 'pending'){
             $advertisement->control='accepted';
-            $advertisement->save();
+            ///////fire_confirm event ///////////
+            $confirm_notification_data = [  
+                
+                "message"=>'تم قبول الاعلان بنجاح', 
+                'advertisement'=>$advertisement,
+                "time" => carbon::now()
+            ];
+            event(new ConfirmOwnerRequestFromAdmin($confirm_notification_data ));
+
+            //////////////////store notification//////////////////////
+        $notification = New Notification ;
+        $notification->user_id = $advertisement_id->user_id ;
+        $notification->advertisement_id = $advertisement_id->id;
+        $notification->content = $confirm_notification_data["message"] ;;
+        $notification->status = "not_red";
+        $notification->sent_at =$confirm_notification_data["time"];
+        $notification->save();
+           
             return response()->json(['message'=>'تم قبول الاعلان بنجاح','advertisement'=>$advertisement]);
+           
         }
+        
     }
 
     public function rejectedRequest(Advertisement $advertisement_id){
