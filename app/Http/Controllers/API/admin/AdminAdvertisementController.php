@@ -47,16 +47,19 @@ class AdminAdvertisementController extends Controller
 //        dd($advertisement->control);
         if ($advertisement->control == 'pending'){
             $advertisement->control='accepted';
-            ///////fire_confirm event ///////////
+            $advertisement->save();
+
+
+            //fire_confirm event 
             $confirm_notification_data = [  
                 
                 "message"=>'تم قبول الاعلان بنجاح', 
-                'advertisement'=>$advertisement,
+                'advertisement'=>$advertisement->title,
                 "time" => carbon::now()
             ];
             event(new ConfirmOwnerRequestFromAdmin($confirm_notification_data ));
 
-            //////////////////store notification//////////////////////
+            //store notification
         $notification = New Notification ;
         $notification->user_id = $advertisement_id->user_id ;
         $notification->advertisement_id = $advertisement_id->id;
