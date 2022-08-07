@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('follow_us', function (Blueprint $table) {
+        Schema::create('follow_uses', function (Blueprint $table) {
             $table->id();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('follow_us');
+        Schema::dropIfExists('follow_uses');
     }
 };

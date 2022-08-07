@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -9,10 +10,15 @@ use App\Http\Controllers\Api\Advertisement_imageController;
 use App\Http\Controllers\API\RateController;
 use App\Http\Controllers\API\FavouriteController;
 use App\Http\Controllers\API\admin\AdminAdvertisementController;
-use App\Http\Controllers\api\CommentsController;
 use App\Http\Controllers\api\OwnerprofileController;
 use App\Http\Controllers\api\OwnerprofilesettinController;
 use App\Http\Controllers\api\GetNotificationController;
+
+use App\Http\Controllers\API\admin\AdminAboutController;
+use App\Http\Controllers\API\admin\AdminFollowUsController;
+use App\Http\Controllers\API\admin\AdminUsersController;
+
+
 
 
 /*
@@ -30,8 +36,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//middleware for admin
-Route::middleware(['Admin','auth:api'])->group(function () {
+//middleware for admin & super admin
+Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () {
+    //advertisements
     Route::get('/admin/pendingAdvertisement',[AdminAdvertisementController::class,'pendingRequest']);
     Route::get('/admin/acceptedAdvertisement',[AdminAdvertisementController::class,'acceptedRequest']);
     Route::get('/admin/declinedAdvertisement',[AdminAdvertisementController::class,'declinedRequest']);
@@ -39,8 +46,44 @@ Route::middleware(['Admin','auth:api'])->group(function () {
     Route::get('/admin/showAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'showRequest']);
     Route::put('/admin/confirmAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'confirmRequest']);
     Route::put('/admin/rejectedAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'rejectedRequest']);
+   //about
+    Route::post('/admin/about/store',[AdminAboutController::class,'store']);
+    Route::get('/admin/about/list',[AdminAboutController::class,'index']);
+    Route::post('/admin/about/update/{about_id}',[AdminAboutController::class,'update']);
+    Route::delete('/admin/about/delete/{about_id}',[AdminAboutController::class,'destroy']);
+    //follow_us
+    Route::get('/admin/follow_us/list',[AdminFollowUsController::class,'index']);
+    Route::post('/admin/follow_us/update/{id}',[AdminFollowUsController::class,'update']);
+});
+
+//middleware for super admin only
+Route::middleware(['SuperAdmin','auth:api'])->group(function () {
+    //users control
+    Route::get('/admin/renters',[AdminUsersController::class,'AllRenters']);
+    Route::get('/admin/owners',[AdminUsersController::class,'AllOwners']);
+    Route::get('/admin/admins',[AdminUsersController::class,'AllAdmins']);
+    Route::get('/admin/blocks',[AdminUsersController::class,'AllBlocks']);
+    Route::delete('/admin/delete/{userId}',[AdminUsersController::class,'destroy']);
+    Route::put('/admin/block/{userId}',[AdminUsersController::class,'block']);
+    Route::post('/admin/addAdmin',[AdminUsersController::class,'addAdmin']);
 
 });
+
+
+
+
+//middleware for renter
+Route::middleware(['renter','auth:api'])->group(function () {
+    //rating
+    Route::post('/rate/store/{advertisement_id}',[RateController::class,'store']);
+    Route::get('/rate/delete/{advertisement_id}/{rate_id}',[RateController::class,'destroy']);
+    //favourite
+    Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
+    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
+    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
+
+});
+
 
 
 
@@ -68,19 +111,8 @@ Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 
 });
 
-//middleware for renter
-Route::middleware(['renter','auth:api'])->group(function () {
-    //rating
-    Route::post('/rate/store/{advertisement_id}',[RateController::class,'store']);
-    Route::get('/rate/delete/{advertisement_id}/{rate_id}',[RateController::class,'destroy']);
-    //favourite
-    Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
-    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
-    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 
 
-
-});
 
 Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
