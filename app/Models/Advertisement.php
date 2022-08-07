@@ -36,5 +36,7 @@ class Advertisement extends Model
     public function ratings(){
         return $this->hasMany(Rating::class,'advertisement_id','id');
     }
-
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
 }

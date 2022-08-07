@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contact_uses_files', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name');
-            $table->foreignId('contactus_id')
-                ->references('id')->on('contact_us')
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contact_us_files');
+        Schema::dropIfExists('cities');
     }
 };

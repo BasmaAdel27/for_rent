@@ -13,18 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contact_uses', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone');
-            $table->text('description');
-            $table->string('url');
-            $table->foreignId('user_id')
+        Schema::table('advertisements', function (Blueprint $table) {
+            $table->dropColumn('Latitude');
+            $table->dropColumn('Longitude');
+            $table->foreignId('city_id')->after('area')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->timestamps();
         });
     }
 
@@ -35,6 +30,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contact_uses');
+        Schema::table('advertisements', function (Blueprint $table) {
+            $table->string('Latitude');
+            $table->string('Longitude');
+            $table->dropConstrainedForeignId('city_id');
+        });
     }
 };

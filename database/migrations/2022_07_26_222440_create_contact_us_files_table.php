@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('follow_uses', function (Blueprint $table) {
+        Schema::create('contact_us_files', function (Blueprint $table) {
             $table->id();
-            $table->string('facebook')->nullable();
-            $table->string('instagram')->nullable();
-            $table->string('twitter')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('logo'); //image
+            $table->string('file_name');
+            $table->foreignId('contactus_id')
+                ->references('id')->on('contact_uses')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('follow_uses');
+        Schema::dropIfExists('contact_us_files');
     }
 };
