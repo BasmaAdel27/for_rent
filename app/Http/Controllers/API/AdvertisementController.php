@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class AdvertisementController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index']]);
+        $this->middleware('auth:api', ['except' => ['index','show']]);
     }
     /**
      * Display a listing of the resource.
@@ -46,7 +47,7 @@ class AdvertisementController extends Controller
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
-            	
+
             'beds_num'=>'required|numeric',
             'level'=>'required|numeric',
             'type'=>'required',
@@ -118,7 +119,7 @@ class AdvertisementController extends Controller
         "Longitude" => $request->Longitude,
         "price"=>$request->price
     ]);
-    
+
     $add_advertisement_data=[
         "advertisement" => $advertisement,
         "message"=>" تم اضافة اعلان من قبل المالك " . Auth::user()->name ."في انتظار موافقتك",
@@ -191,9 +192,15 @@ class AdvertisementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Advertisement $advertisement_id)
     {
-        //
+        $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented'],['control','accepted']])
+            ->with('advertisement_image','user','ratings')->get();
+        $avg_rating=Rating::where('advertisement_id',$advertisement_id->id)->pluck('count');
+        $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
+        $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)
+            ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->get();
+        return response()->json(['advertisement'=>$advertisement,'reviews_num'=>count($avg_rating),'reviews_avg'=>$avg_rating->avg(),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
     }
 
 
@@ -207,8 +214,8 @@ class AdvertisementController extends Controller
     {
         //
     }
-      
-    
+
+
     /////////////////////////////UPDATE/////////////////////////////////////////////
 
     /**
@@ -219,8 +226,8 @@ class AdvertisementController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    { 
-        
+    {
+
 
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10|unique:advertisements|max:200',
@@ -228,7 +235,7 @@ class AdvertisementController extends Controller
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
-            	
+
             'beds_num'=>'required|numeric',
             'level'=>'required|numeric',
             'type'=>'required',
@@ -283,7 +290,7 @@ class AdvertisementController extends Controller
         }
     /////////////store in databasee////////////////////////////////
     $user = Auth::user();
-   
+
         $advertisement= Advertisement::find($id);
         $advertisement->update([
             "title" =>$request->title,

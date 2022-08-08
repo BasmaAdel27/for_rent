@@ -83,13 +83,10 @@ class AdminUsersController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
         }
         if ($request->image != null) {
-            //image validation
-            $strToArr = explode(".", $_FILES["image"]["name"]);
-            $extension = end($strToArr);
-            $newimagename = round(microtime(true)) . '.' . $extension;
-            $request->image->move(public_path('images'), $newimagename);
+            $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
         }else{
-            $newimagename=null;
+            $imageURL=null;
         }
 
         // store admin in database
@@ -99,7 +96,7 @@ class AdminUsersController extends Controller
             'type' =>'admin',
             'phone' =>$request->phone,
             'gender' =>$request->gender,
-            'image'=>$newimagename,
+            'image'=>$imageURL,
             'password' => Hash::make($request->password)
         ]);
         $admin->email_verified_at=Carbon::now();

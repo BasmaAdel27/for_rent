@@ -17,6 +17,7 @@ use App\Http\Controllers\api\GetNotificationController;
 use App\Http\Controllers\API\admin\AdminAboutController;
 use App\Http\Controllers\API\admin\AdminFollowUsController;
 use App\Http\Controllers\API\admin\AdminUsersController;
+use App\Http\Controllers\API\admin\AdminContactusController;
 
 
 
@@ -54,6 +55,10 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     //follow_us
     Route::get('/admin/follow_us/list',[AdminFollowUsController::class,'index']);
     Route::post('/admin/follow_us/update/{id}',[AdminFollowUsController::class,'update']);
+    Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
+    Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
+    Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
+
 });
 
 //middleware for super admin only
@@ -124,21 +129,21 @@ Route::middleware(['auth:api'])->group(function () {
 });
 
 
+Route::get('/show/advertisement/{advertisement_id}',[AdvertisementController::class,'show']);
+Route::post('/contactUs/store',[AdminContactusController::class,'store']);
+
+
+
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/verify',[AuthController::class,'verifyUser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
 //Route::post('/refresh', 'refresh');
-
-///////////////////////////////////Advertisement owner routes///////////////////////////////
-
-
-
-
-
-
-
 Route::post('/password/reset', [ResetPasswordController::class,'reset']);
+
+
+
+
 
 
 

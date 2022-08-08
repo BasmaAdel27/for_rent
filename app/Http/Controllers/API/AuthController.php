@@ -104,13 +104,10 @@ class AuthController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
         }
         if ($request->image != null) {
-            //image validation
-            $strToArr = explode(".", $_FILES["image"]["name"]);
-            $extension = end($strToArr);
-            $newimagename = round(microtime(true)) . '.' . $extension;
-            $request->image->move(public_path('images'), $newimagename);
+            $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
         }else{
-            $newimagename=null;
+            $imageURL=null;
         }
            //name and email variable
         $name=$request->name;
@@ -123,15 +120,15 @@ class AuthController extends Controller
             'type' =>$request->type,
             'phone' =>$request->phone,
             'gender' =>$request->gender,
-            'image'=>$newimagename,
+            'image'=>$imageURL,
             'password' => Hash::make($request->password),
         ]);
 
         if ($user->image==null && $user->gender== 'female'){
-            $user->image='girl.jpg';
+            $user->image='https://bootstrapious.com/i/snippets/sn-about/avatar-4.png';
             $user->save();
         }elseif ($user->image==null && $user->gender== 'male'){
-            $user->image='male.jpg';
+            $user->image='https://www.bootdey.com/img/Content/avatar/avatar7.png';
             $user->save();
         }
 
@@ -172,7 +169,8 @@ class AuthController extends Controller
             if($user->email_verified_at != null){
                 return response()->json([
                     'success'=> true,
-                    'message'=> 'هذا الحساب تم تفعيله من قبل'
+                    'message'=> 'هذا الحساب تم تفعيله من قبل',
+                    'user'=>$user
                 ]);
             }
 //
