@@ -17,6 +17,12 @@ use App\Http\Controllers\api\GetNotificationController;
 use App\Http\Controllers\API\admin\AdminAboutController;
 use App\Http\Controllers\API\admin\AdminFollowUsController;
 use App\Http\Controllers\API\admin\AdminUsersController;
+use App\Http\Controllers\api\CityController;
+use App\Http\Controllers\api\HomeController;
+use App\Http\Controllers\api\SearchController;
+
+
+
 
 
 
@@ -54,6 +60,8 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     //follow_us
     Route::get('/admin/follow_us/list',[AdminFollowUsController::class,'index']);
     Route::post('/admin/follow_us/update/{id}',[AdminFollowUsController::class,'update']);
+    Route::post('/cities',[CityController::class,'store']);
+
 });
 
 //middleware for super admin only
@@ -81,6 +89,10 @@ Route::middleware(['renter','auth:api'])->group(function () {
     Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
     Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
     Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
+
+   
+
+    
 
 });
 
@@ -128,6 +140,11 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/verify',[AuthController::class,'verifyUser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
+Route::get('/Home',[ HomeController::class,'index']);
+Route::get('/search',[SearchController::class,'search']);
+
+
+
 //Route::post('/refresh', 'refresh');
 
 ///////////////////////////////////Advertisement owner routes///////////////////////////////
