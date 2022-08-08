@@ -18,6 +18,12 @@ use App\Http\Controllers\API\admin\AdminAboutController;
 use App\Http\Controllers\API\admin\AdminFollowUsController;
 use App\Http\Controllers\API\admin\AdminUsersController;
 use App\Http\Controllers\API\admin\AdminContactusController;
+use App\Http\Controllers\api\CityController;
+use App\Http\Controllers\api\HomeController;
+use App\Http\Controllers\api\SearchController;
+
+
+
 
 
 
@@ -58,6 +64,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
     Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
+    Route::post('/cities',[CityController::class,'store']);
 
 });
 
@@ -86,6 +93,10 @@ Route::middleware(['renter','auth:api'])->group(function () {
     Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
     Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
     Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
+
+
+
+
 
 });
 
@@ -138,6 +149,11 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/verify',[AuthController::class,'verifyUser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
+Route::get('/Home',[ HomeController::class,'index']);
+Route::get('/search',[SearchController::class,'search']);
+
+
+
 //Route::post('/refresh', 'refresh');
 Route::post('/password/reset', [ResetPasswordController::class,'reset']);
 

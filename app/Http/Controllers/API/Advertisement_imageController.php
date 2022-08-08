@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Advertisement;
 use App\Models\Advertisement_image;
+use App\Models\City;
+
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
 
 class Advertisement_imageController extends Controller
 {
@@ -65,13 +69,11 @@ class Advertisement_imageController extends Controller
             $ad_image = [];
             foreach($request->file('image_name') as $image)
             {
-                $destinationPath = public_path('images/advertisement_images');
-                $Extension = $image->getClientOriginalExtension();
-                $filename=mt_rand(100000000,99999999999999). "." . $Extension;
-                $image->move($destinationPath, $filename);
+                $imageURL = cloudinary()->upload($image->getRealPath())->getSecurePath();
+
                
                 $ad_image []= Advertisement_image::create([
-                    "image_name" =>  $filename,
+                    "image_name" =>  $imageURL,
                     "advertisement_id"=>$id
                 ]);
                 
@@ -122,12 +124,9 @@ class Advertisement_imageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $advertisement = Advertisement::find($id);
-    $images =  $advertisement->advertisement_image()->get();
-    // return response()->json($images);
 
         $validator =Validator::make($request->all(),[
-            'image_name' => 'required|array|nullable',
+            'image_name' => 'required|array',
             'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
             ],[
                 "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
@@ -137,35 +136,31 @@ class Advertisement_imageController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error'=>$validator->errors()], 401);
             }
-        //     ///////////////image stores///////////////////////
        
-    //    }
+       
 
 
-    $advertisement = Advertisement::findOrFail($id);
-        $input = $request->all();
-        $photos = $request->file('image_name');
-        $advertisement->advertisement_image()->delete();
+    $advertisement = Advertisement::find($id);
+    $advertisement->advertisement_image()->delete();
+    $photos = $request->file('image_name');
+
+
 
 
         foreach ($photos as $photo) {
-           
 
-            $Extension = $photo->getClientOriginalExtension();
-            $filename=mt_rand(100000000,99999999999999). "." . $Extension;
-            $destinationPath = public_path('images/advertisement_images');
-
-            $photo->move( $destinationPath, $filename);
-
+            $imageURL = cloudinary()->upload($photo->getRealPath())->getSecurePath();
             $adPhoto = new Advertisement_image;
             $adPhoto->advertisement_id = $advertisement->id;
-           $ad_img[]= $adPhoto->image_name   = $filename;
+           $ad_img[]= $adPhoto->image_name   = $imageURL;
             $adPhoto->save();
 
 
         }
+        return response()->json("updated successfully");
+
         
-       return response()->json("updated successfully");
+      
         
         
      }
@@ -176,12 +171,12 @@ class Advertisement_imageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Advertisement $advertisement_id)
     {
-        $advertisement = Advertisement::findOrFail($id);
+       $id=  $advertisement_id->id; 
 
-        $advertisement->advertisement_image()->delete();
-
+       $as=$advertisement_id->advertisement_image();
+       return $as;
 
     }
 }

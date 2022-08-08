@@ -9,10 +9,15 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\City;
+
 
 use App\Models\Advertisement;
+use App\Models\Advertisement_image;
+
 use App\Events\AddAdvertisement;
 use Illuminate\Support\Carbon;
+
 
 
 
@@ -39,7 +44,7 @@ class AdvertisementController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(Request $request )
     {
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10|unique:advertisements|max:200',
@@ -55,8 +60,10 @@ class AdvertisementController extends Controller
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
             'address' => 'required|max:40|min:10|string',
-            'Latitude'=>'required|numeric',
-            'Longitude' =>'required|numeric',
+            'image_name' => 'required|array|nullable',
+        'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
+
+            "city_id" => "required"
         ],[
             'title.required' =>'برجاء ادخال عنوان الاعلان',
             'title.unique' => 'يجب ان يكون اسم الاعلان مميز و غير مكرر يرجاء اخال عنوان اخر ',
@@ -88,10 +95,12 @@ class AdvertisementController extends Controller
             'area.required' => 'برجاء ادخال المساحه الخاصه بالاعلان',
             'area.numeric' => 'برجاء ادخال رقم ',
             'address.required' => 'برجاء ادخال عنوان الاعلان',
-            'Latitude.required' => 'برجاء ادخال خطالطول',
-            'Latitude.numeric' => 'برجاء ادخال رقم لخط الطول',
-            'Longitude.required' => 'برجاء ادخال خط العرض ',
-            'Longitude.numeric' => 'برجاء ادخال رقم لخط العرض',
+
+
+            "city_id.required" => "برجاء ادخال اسم المدينه او المحافظه الحاصه بالاعلان",
+            "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
+            "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
+            "image_name.mimes" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
 
 
 
@@ -100,9 +109,8 @@ class AdvertisementController extends Controller
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
-    /////////////store in databasee////////////////////////////////
+    //store in databasee
     $user = Auth::user();
-    $id = Auth::id();
 
     $advertisement = $user->advertisement()->create([
        "title" =>$request->title,
@@ -115,27 +123,48 @@ class AdvertisementController extends Controller
         "type" => $request->type,
         "area"=> $request->area,
         "address" => $request->address,
-        "Latitude" => $request->Latitude,
-        "Longitude" => $request->Longitude,
-        "price"=>$request->price
+        "price"=>$request->price,
+        "city_id" => $request->city_id
     ]);
 
+    //store image
+    if($request->hasFile('image_name'))
+    {
+        $ad_image = [];
+        foreach($request->file('image_name') as $image)
+        {
+            $imageURL = cloudinary()->upload($image->getRealPath())->getSecurePath();
+
+
+            $ad_image []= Advertisement_image::create([
+                "image_name" =>  $imageURL,
+                "advertisement_id"=> $advertisement->id
+            ]);
+
+
+
+        }
+
+
+        $advertisement->advertisement_image()->saveMany($ad_image);
+    }
+    //end store image
     $add_advertisement_data=[
         "advertisement" => $advertisement,
         "message"=>" تم اضافة اعلان من قبل المالك " . Auth::user()->name ."في انتظار موافقتك",
         "time" => carbon::now()
     ];
     event(new AddAdvertisement($add_advertisement_data));
-    /////////store in table notification///////////
+    //store in table notification
     $notification = New Notification ;
-    $notification->user_id = 5;    ///////////ADMIN ID///////////
+    $notification->user_id = 1;    //ADMIN ID
     $notification->advertisement_id = $advertisement->id;
     $notification->content = $add_advertisement_data["message"];
     $notification->status = "not_red";
     $notification->sent_at =$add_advertisement_data["time"];
     $notification->save();
 
-    return response()->json( $advertisement);
+    return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image] );
 
     }
 
@@ -153,14 +182,14 @@ class AdvertisementController extends Controller
     public function not_rented()
     {
         $user = Auth::user();
-        $not_rented =$user->advertisement()->whereStatus("not rented")->get();
+        $not_rented =$user->advertisement()->whereStatus("not rented")->whereControl("accepted")->get();
         return  response()->json([$not_rented,  $user]);
     }
 
     public function rented()
     {
         $user = Auth::user();
-        $rented =$user->advertisement()->whereStatus("rented")->get();
+        $rented =$user->advertisement()->whereStatus("rented")->whereControl("accepted")->get();
 
         return  response()->json([$rented, $user ]);
     }
@@ -230,7 +259,7 @@ class AdvertisementController extends Controller
 
 
         $validator =Validator::make($request->all(),[
-            'title' => 'required|string|min:10|unique:advertisements|max:200',
+            'title' => 'required|string|min:10|max:200',
             'description' => 'required|string|min:20|max:300',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
@@ -243,11 +272,12 @@ class AdvertisementController extends Controller
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
             'address' => 'required|max:40|min:10|string',
-            'Latitude'=>'required|numeric',
-            'Longitude' =>'required|numeric',
+            'city_id'=>'required',
+            'image_name' => 'required|array',
+            'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
+
         ],[
             'title.required' =>'برجاء ادخال عنوان الاعلان',
-            'title.unique' => 'يجب ان يكون اسم الاعلان مميز و غير مكرر يرجاء اخال عنوان اخر ',
             'title.min' => 'برجاء ادخال عنوان لا تقل حروفه عن 20 حرف ',
             'title.max' => 'اقصى حد للعنوان هو 200 حرف',
 
@@ -276,10 +306,13 @@ class AdvertisementController extends Controller
             'area.required' => 'برجاء ادخال المساحه الخاصه بالاعلان',
             'area.numeric' => 'برجاء ادخال رقم ',
             'address.required' => 'برجاء ادخال عنوان الاعلان',
-            'Latitude.required' => 'برجاء ادخال خطالطول',
-            'Latitude.numeric' => 'برجاء ادخال رقم لخط الطول',
-            'Longitude.required' => 'برجاء ادخال خط العرض ',
-            'Longitude.numeric' => 'برجاء ادخال رقم لخط العرض',
+            "city_id.required" => "برجاء ادخال اسم المدينه او المحافظه الحاصه بالاعلان",
+            "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
+                "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
+                "image_name.mimes" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
+
+
+
 
 
 
@@ -306,9 +339,32 @@ class AdvertisementController extends Controller
         "Latitude" => $request->Latitude,
         "Longitude" => $request->Longitude,
         "control" => "pending",
-        "price"=>$request->price]);
+        "price"=>$request->price,
+        "city_id" =>$request->city_id
+    ]);
+    //update image
+    $advertisement = Advertisement::find($id);
+    $advertisement->advertisement_image()->delete();
+    $photos = $request->file('image_name');
+
+
+
+
+        foreach ($photos as $photo) {
+
+            $imageURL = cloudinary()->upload($photo->getRealPath())->getSecurePath();
+            $adPhoto = new Advertisement_image;
+            $adPhoto->advertisement_id = $advertisement->id;
+           $ad_img[]= $adPhoto->image_name   = $imageURL;
+            $adPhoto->save();
+
+
+        }
+
+
+    //end update image
         //update
-       return response()->json( [$advertisement , "user"=>Auth::user()]);
+       return response()->json( ["advertisement"=>$advertisement , "user"=>Auth::user(), "images" => $ad_img]);
     }
 
     /**
