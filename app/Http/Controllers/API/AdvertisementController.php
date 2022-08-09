@@ -373,8 +373,18 @@ class AdvertisementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy( $id)
     {
-        //
+        $advertisement = Advertisement::find($id);
+        if((Auth::user()->type)=="owner"&& (($advertisement->user_id) == (Auth::user()->id)) ){
+            $advertisement->delete();
+            return response()->json("تم المسح بنجاح");
+
+            
+        }else{
+            $message = "غير مصرح لك بالمسح ";
+            return response()->json( [ "message" =>$message]);
+
+        }
     }
 }

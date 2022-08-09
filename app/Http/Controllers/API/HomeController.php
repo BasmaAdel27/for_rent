@@ -16,34 +16,17 @@ use App\Models\Rating;
 class HomeController extends Controller
 {
     public function index(){
-
-//         $alladvertisements= Advertisement::all();
-// $rates=[];
-//         foreach($alladvertisements as $oneadvertisement){
-            
-//             $oneadvertisement::with("");
-            
-//         }
-        
-                // return response()->json(["advertisement"=>$alladvertisements, "avarage" => $avg , "review_count" => $review_count]);
-
-
-        
-    
-
-
         if(Auth::user()){
-        
-        $advertisements = Advertisement::with('favourit')->get();
-        
-        return response()->json( ["favourite asvertisement"=>$advertisements]);
+            $ad=Advertisement::withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();
+            return response()->json(["all advertisements" => $ad]);
+        }else{
 
-    }else{
-        return response()->json( ["all asvertisement"=>Advertisement::all()]);
 
-    }
+        $ad=Advertisement::withCount('ratings')->withAvg("ratings", "count")->get();
 
-   
+          return response()->json(["all advertisements" => $ad]);
+        }
+    
 
         
 
