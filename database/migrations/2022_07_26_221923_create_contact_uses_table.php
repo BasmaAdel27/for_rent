@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->text('description');
-            $table->string('url');
-            $table->foreignId('user_id')
+            $table->string('url')->nullable();
+            $table->foreignId('user_id')->nullable()
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

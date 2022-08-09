@@ -55,17 +55,14 @@ class AdminAboutController extends Controller
         if($validator->fails()){
             return response()->json(['error'=>$validator->errors()],401);
         }
-            //image validation
-            $strToArr = explode(".", $_FILES["image"]["name"]);
-            $extension = end($strToArr);
-            $newimagename = round(microtime(true)) . '.' . $extension;
-            $request->image->move(public_path('images'), $newimagename);
+        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
 
 
         $about=new About();
         $about->title=$request->title;
         $about->description=$request->description;
-        $about->image=$newimagename;
+        $about->image=$imageURL;
         $about->save();
 
         return response()->json(['message'=>'تمت اضافه المحتوى بنجاح','about'=>$about]);
@@ -125,15 +122,13 @@ class AdminAboutController extends Controller
 //        $photo=$request->file('image');
 //        dd($request->all());
 
-        $strToArr = explode(".", $_FILES["image"]["name"]);
-        $extension = end($strToArr);
-        $newimagename = round(microtime(true)) . '.' . $extension;
-        $request->image->move(public_path('images'), $newimagename);
+        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
 
         $about->update([
             'title'=>$request->title,
             'description'=>$request->description,
-            'image'=>$newimagename
+            'image'=>$imageURL
         ]);
 
         return response()->json(['message'=>'تم التعديل بنجاح','data'=>$about]);

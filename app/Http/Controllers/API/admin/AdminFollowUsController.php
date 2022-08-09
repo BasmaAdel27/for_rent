@@ -93,10 +93,8 @@ class AdminFollowUsController extends Controller
             return response()->json(['error'=>$validator->errors()],401);
         }
 
-        $strToArr = explode(".", $_FILES["logo"]["name"]);
-        $extension = end($strToArr);
-        $newimagename = round(microtime(true)) . '.' . $extension;
-        $request->logo->move(public_path('images'), $newimagename);
+        $imageURL = cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
+
 
         $followUs=Follow_us::find($id);
         $followUs->update([
@@ -105,7 +103,7 @@ class AdminFollowUsController extends Controller
             'twitter'=>$request->twitter,
             'email'=>$request->email,
             'phone'=>$request->phone,
-            'logo'=>$newimagename,
+            'logo'=>$imageURL,
         ]);
 
         return response()->json(['message'=>'تم التعديل بنجاح','data'=>$followUs]);
