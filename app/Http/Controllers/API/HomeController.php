@@ -17,12 +17,13 @@ class HomeController extends Controller
 {
     public function index(){
         if(Auth::user()){
-            $ad=Advertisement::withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();
+            
+            $ad=Advertisement::where([["status", "not rented"],["control", "accepted"]])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();
             return response()->json(["all advertisements" => $ad]);
         }else{
 
 
-        $ad=Advertisement::withCount('ratings')->withAvg("ratings", "count")->get();
+        $ad=Advertisement::where([["status", "not rented"],["control", "accepted"]])->withCount('ratings')->withAvg("ratings", "count")->get();
 
           return response()->json(["all advertisements" => $ad]);
         }
