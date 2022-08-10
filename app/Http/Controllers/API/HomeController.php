@@ -19,7 +19,7 @@ class HomeController extends Controller
         if(Auth::user()){
 
             $ad=Advertisement::where([["status", "not rented"],["control", "accepted"]])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();
-            return response()->json(["all advertisements" => $ad]);
+            return response()->json(["allAdvertisements" => $ad]);
         }else{
 
 

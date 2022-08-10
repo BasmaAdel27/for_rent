@@ -90,7 +90,7 @@ class AuthController extends Controller
                 'type.required'=>'هذا الحقل مطلوب ادخاله',
                 'password.required' => 'برجاء ادخال كلمه المرور',
                 'password.min' => 'لابد ان تكون كلمه المرور اكثر من 8',
-                'password.regex'=>'يجب أن تتكون كلمة المرور الخاصة بك من أكثر من 8 أحرف ، ويجب أن تحتوي على الأقل على حرف كبير واحد ، وحرف صغير واحد ، ورقم واحد ، وحرف خاص واحد',
+                'password.regex'=>'يجب أن تتكون كلمة المرور الخاصة بك من أكثر من 8 أحرف ، ويجب أن تحتوي على الأقل على حرف كبير واحد ، وحرف صغير واحد ، ورقم واحد ، ورمزا واحد',
                 'password.confirmed' => ' برجاء تأكيد كلمه المرور التي تم ادخالها',
                 'phone.min' => 'رقم الهاتف لابد ان يكون مكون من 11 رقم ',
                 'phone.required' => 'برجاء ادخال رقم الهاتف الخاص بك',
@@ -131,7 +131,7 @@ class AuthController extends Controller
             $user->image='https://www.bootdey.com/img/Content/avatar/avatar7.png';
             $user->save();
         }
-
+        $data=User::where('email',$user->email)->first();
 
             //mail verification
         $verification_code =random_int(100000, 999999);//Generate verification code
@@ -148,7 +148,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'message' =>'نشكرك على اشتراكك معانا,برجاء متابعه بريدك لالكتروني لقد ارسلنا لك رمز التفعيل',
-            'user' => $user,
+            'user' => $data,
         ]);
     }
 
@@ -157,11 +157,12 @@ class AuthController extends Controller
     {
         $verification_code=$request->all();
 //        dd($verification_code);
-        $check = DB::table('user_verifications')->where('token',$verification_code)->first();
+        $check = DB::table('user_verifications')->where([['token',$request->token],['user_id',$request->id]])->first();
+
         if (!$check){
             return response()->json([
                     'success'=> 'error',
-                    'message'=> 'your verification code wrong please try again.'
+                    'message'=> 'الكود التي تم ادخاله خاطئ برجاء اعاده المحاوله'
                 ]);
         }
         $user = User::find($check->user_id);
@@ -178,11 +179,12 @@ class AuthController extends Controller
             $user->email_verified_at=Carbon::now();
             $user->save();
 
-            DB::table('user_verifications')->where('token',$verification_code)->delete();
+            DB::table('user_verifications')->where([['token',$request->token],['user_id',$request->id]])->delete();
 
             return ([
                 'success'=> true,
                 'message'=> 'لقد تم تفعيل حسابك بنجاح',
+                'user'=>$user
             ]);
         }
 

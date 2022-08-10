@@ -224,12 +224,12 @@ class AdvertisementController extends Controller
     public function show(Advertisement $advertisement_id)
     {
         $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented'],['control','accepted']])
-            ->with('advertisement_image','user','ratings')->get();
-        $avg_rating=Rating::where('advertisement_id',$advertisement_id->id)->pluck('count');
+            ->with('advertisement_image','user')->get();
+        $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
         $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
-        $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)
+        $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)->withAvg('ratings','count')->withCount('ratings')
             ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->get();
-        return response()->json(['advertisement'=>$advertisement,'reviews_num'=>count($avg_rating),'reviews_avg'=>$avg_rating->avg(),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
+        return response()->json(['advertisement'=>$advertisement,'reviews'=>$rating,'reviews_num'=>count($rating),'reviews_avg'=>$rating->avg('count'),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
     }
 
 
@@ -380,7 +380,7 @@ class AdvertisementController extends Controller
             $advertisement->delete();
             return response()->json("تم المسح بنجاح");
 
-            
+
         }else{
             $message = "غير مصرح لك بالمسح ";
             return response()->json( [ "message" =>$message]);
