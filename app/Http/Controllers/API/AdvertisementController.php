@@ -274,7 +274,7 @@ class AdvertisementController extends Controller
             'address' => 'required|max:40|min:10|string',
             'city_id'=>'required',
             'image_name' => 'required|array',
-            'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
+            'image_name.*' => 'image|mime:jpeg,png,jpg,gif,svg',
 
         ],[
             'title.required' =>'برجاء ادخال عنوان الاعلان',
@@ -336,8 +336,7 @@ class AdvertisementController extends Controller
         "type" => $request->type,
         "area"=> $request->area,
         "address" => $request->address,
-        "Latitude" => $request->Latitude,
-        "Longitude" => $request->Longitude,
+       
         "control" => "pending",
         "price"=>$request->price,
         "city_id" =>$request->city_id
