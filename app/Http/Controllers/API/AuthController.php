@@ -166,6 +166,7 @@ class AuthController extends Controller
                 ]);
         }
         $user = User::find($check->user_id);
+        $token = Auth::login($user);
         if(!is_null($check)){
             if($user->email_verified_at != null){
                 return response()->json([
@@ -184,7 +185,8 @@ class AuthController extends Controller
             return ([
                 'success'=> true,
                 'message'=> 'لقد تم تفعيل حسابك بنجاح',
-                'user'=>$user
+                'user'=>$user,
+                'token'=>$token
             ]);
         }
 
