@@ -13,7 +13,7 @@ class SearchController extends Controller
 {
     public function search( Request $request){
 
-        if(Auth::user()){
+     if(Auth::user()){
              
         if((($request->city_id)&&($request->type)&&($request->bedroom_num)) ){
             $search_results = Advertisement::where([
@@ -21,7 +21,7 @@ class SearchController extends Controller
                 ['type', '=', $request->type],
                 ["bedroom_num","=",$request->bedroom_num],
                 ["status", "not rented"],["control", "accepted"]
-            ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();
+            ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
             return response()->json($search_results);
     
     
@@ -32,7 +32,7 @@ class SearchController extends Controller
                     ['type', '=', $request->type],
                     ["status", "not rented"],["control", "accepted"]
                     
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();  
+                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();  
                   return response()->json($search_results);
             }elseif(($request->city_id)&&($request->bedroom_num)){  
     
@@ -41,7 +41,7 @@ class SearchController extends Controller
                     ["bedroom_num","=",$request->bedroom_num],
                     ["status", "not rented"],["control", "accepted"]
                     
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get(); 
+                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get(); 
                   return response()->json($search_results);
             }elseif(($request->type)&&($request->bedroom_num)){  
     
@@ -50,7 +50,7 @@ class SearchController extends Controller
                     ["bedroom_num","=",$request->bedroom_num],
                     ["status", "not rented"],["control", "accepted"]
                     
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();  
+                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();  
                   return response()->json($search_results);
             }elseif(($request->type)){  
     
@@ -59,7 +59,7 @@ class SearchController extends Controller
                     ["status", "not rented"],["control", "accepted"]
                   
                     
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();
+                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
                   return response()->json($search_results);
             }elseif(($request->bedroom_num)){  
     
@@ -68,7 +68,7 @@ class SearchController extends Controller
                     ["bedroom_num","=",$request->bedroom_num],
                     ["status", "not rented"],["control", "accepted"]
                     
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();  
+                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();  
                   return response()->json($search_results);
             }elseif(($request->city_id)){  
     
@@ -79,7 +79,7 @@ class SearchController extends Controller
                     
                     
                     
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit')->get();   
+                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();   
                   return response()->json($search_results);
             }else{
                 return response()->json(["message"=>"من فضلك ادخل كلمات البحث "]);
@@ -98,7 +98,7 @@ class SearchController extends Controller
             ['type', '=', $request->type],
             ["bedroom_num","=",$request->bedroom_num],
             ["status", "not rented"],["control", "accepted"]
-        ])->withCount('ratings')->withAvg("ratings", "count")->get();
+        ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
         return response()->json($search_results);
 
 
@@ -109,7 +109,7 @@ class SearchController extends Controller
                 ['type', '=', $request->type],
                 ["status", "not rented"],["control", "accepted"]
                 
-            ])->withCount('ratings')->withAvg("ratings", "count")->get();  
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();  
               return response()->json($search_results);
         }elseif(($request->city_id)&&($request->bedroom_num)){  
 
@@ -118,7 +118,7 @@ class SearchController extends Controller
                 ["bedroom_num","=",$request->bedroom_num],
                 ["status", "not rented"],["control", "accepted"]
                 
-            ])->withCount('ratings')->withAvg("ratings", "count")->get(); 
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get(); 
               return response()->json($search_results);
         }elseif(($request->type)&&($request->bedroom_num)){  
 
@@ -127,7 +127,7 @@ class SearchController extends Controller
                 ["bedroom_num","=",$request->bedroom_num],
                 ["status", "not rented"],["control", "accepted"]
                 
-            ])->withCount('ratings')->withAvg("ratings", "count")->get();  
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();  
               return response()->json($search_results);
         }elseif(($request->type)){  
 
@@ -136,7 +136,7 @@ class SearchController extends Controller
                 ["status", "not rented"],["control", "accepted"]
               
                 
-            ])->withCount('ratings')->withAvg("ratings", "count")->get();
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
               return response()->json($search_results);
         }elseif(($request->bedroom_num)){  
 
@@ -145,7 +145,7 @@ class SearchController extends Controller
                 ["bedroom_num","=",$request->bedroom_num],
                 ["status", "not rented"],["control", "accepted"]
                 
-            ])->withCount('ratings')->withAvg("ratings", "count")->get();  
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();  
               return response()->json($search_results);
         }elseif(($request->city_id)){  
 
@@ -156,7 +156,7 @@ class SearchController extends Controller
                 
                 
                 
-            ])->withCount('ratings')->withAvg("ratings", "count")->get();   
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();   
               return response()->json($search_results);
         }else{
             return response()->json(["message"=>"من فضلك ادخل كلمات البحث "]);

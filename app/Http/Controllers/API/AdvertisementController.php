@@ -197,21 +197,21 @@ class AdvertisementController extends Controller
     public function pending()
     {
         $user = Auth::user();
-        $pending =$user->advertisement()->whereControl("pending")->get();
+        $pending =$user->advertisement()->whereControl("pending")->with("advertisement_image")->get();
 
         return  response()->json([$pending, $user ]);
     }
     public function accepted()
     {
         $user = Auth::user();
-        $accepted =$user->advertisement()->whereControl("accepted")->get();
+        $accepted =$user->advertisement()->whereControl("accepted")->with("advertisement_image")->get();
 
         return  response()->json([$accepted, $user ]);
     }
     public function declined()
     {
         $user = Auth::user();
-        $declined =$user->advertisement()->whereControl("declined")->get();
+        $declined =$user->advertisement()->whereControl("declined")->with("advertisement_image")->get();
 
         return  response()->json([$declined, $user ]);
     }
