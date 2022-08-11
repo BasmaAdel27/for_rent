@@ -228,7 +228,7 @@ class AdvertisementController extends Controller
         $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
         $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
         $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)->withAvg('ratings','count')->withCount('ratings')
-            ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->get();
+            ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->with('advertisement_image')->get();
         return response()->json(['advertisement'=>$advertisement,'reviews'=>$rating,'reviews_num'=>count($rating),'reviews_avg'=>$rating->avg('count'),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
     }
 
@@ -336,7 +336,7 @@ class AdvertisementController extends Controller
         "type" => $request->type,
         "area"=> $request->area,
         "address" => $request->address,
-       
+
         "control" => "pending",
         "price"=>$request->price,
         "city_id" =>$request->city_id
