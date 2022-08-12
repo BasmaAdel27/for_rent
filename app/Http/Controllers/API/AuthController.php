@@ -162,7 +162,7 @@ class AuthController extends Controller
 
         if (!$check){
             return response()->json([
-                    'success'=> 'error',
+                    'error'=> 'error',
                     'message'=> 'الكود التي تم ادخاله خاطئ برجاء اعاده المحاوله'
                 ]);
         }
