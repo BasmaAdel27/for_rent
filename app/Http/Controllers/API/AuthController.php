@@ -61,7 +61,8 @@ class AuthController extends Controller
                     ]
                 ]);
             }else{
-                return Response()->json(['message' => 'برجاء تفعيل بريدك الالكتروني ']);
+                $user=User::where('email',$request->email)->get();
+                return Response()->json(['message' => 'برجاء تفعيل بريدك الالكتروني ','user'=>$user]);
 
             }
         } else {
