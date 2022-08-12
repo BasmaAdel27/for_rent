@@ -46,7 +46,7 @@ class AuthController extends Controller
 //            dd('d');
             if (!$token) {
                 return response()->json([
-                    'status' => 'error',
+                    'status' => false,
                     'message' => 'غير مصرح لك بالدخول',
                 ], 401);
             } elseif ($token && \auth()->user()->email_verified_at != null) {
@@ -162,7 +162,7 @@ class AuthController extends Controller
 
         if (!$check){
             return response()->json([
-                    'error'=> 'error',
+                    'success'=> false,
                     'message'=> 'الكود التي تم ادخاله خاطئ برجاء اعاده المحاوله'
                 ]);
         }
