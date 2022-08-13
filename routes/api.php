@@ -62,6 +62,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
     Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
+    //city
     Route::post('/cities',[CityController::class,'store']);
     Route::get('/cities',[CityController::class,'show']);
 
@@ -70,6 +71,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::post('/admin/team/store',[AdminTeamController::class,'store']);
     Route::post('/admin/team/update/{team_id}',[AdminTeamController::class,'update']);
     Route::delete('/admin/team/destroy/{team_id}',[AdminTeamController::class,'destroy']);
+    
 
 });
 Route::get('/about/list',[AdminAboutController::class,'index']);
@@ -160,6 +162,12 @@ Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
 Route::get('/Home',[ HomeController::class,'index']);
 Route::get('/search',[SearchController::class,'search']);
+Route::get('/city_search',[SearchController::class,'city_choices']);
+Route::get('/type_search',[SearchController::class,'type_choices']);
+Route::get('/bedroom_search',[SearchController::class,'bedroom_choices']);
+
+
+
 
 
 
