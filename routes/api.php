@@ -20,6 +20,7 @@ use App\Http\Controllers\API\admin\AdminContactusController;
 use App\Http\Controllers\api\CityController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\SearchController;
+use App\Http\Controllers\API\admin\AdminTeamController;
 
 
 
@@ -63,9 +64,14 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
     Route::post('/cities',[CityController::class,'store']);
 
+    Route::post('/admin/team/store',[AdminTeamController::class,'store']);
+    Route::post('/admin/team/update/{team_id}',[AdminTeamController::class,'update']);
+    Route::delete('/admin/team/destroy/{team_id}',[AdminTeamController::class,'destroy']);
+
 });
 Route::get('/about/list',[AdminAboutController::class,'index']);
 Route::get('/follow_us/list',[AdminFollowUsController::class,'index']);
+Route::get('/teams/list',[AdminTeamController::class,'index']);
 
 
 //middleware for super admin only
