@@ -64,6 +64,9 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
     Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
     Route::post('/cities',[CityController::class,'store']);
+    Route::get('/cities',[CityController::class,'show']);
+
+
 
 });
 
@@ -91,7 +94,6 @@ Route::middleware(['renter','auth:api'])->group(function () {
     //favourite
     Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
     Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
-    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 
 
 
@@ -131,6 +133,8 @@ Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/get_notification', [GetNotificationController::class,'view']);
+    Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
+
 
 
 

@@ -45,4 +45,9 @@ class CityController extends Controller
          City::insert($data);
          return response()->json("success");
     }
+
+    public function show(){
+        $all_cities = City::all();
+        return response()->json(["cities" =>  $all_cities]);
+    }
 }
