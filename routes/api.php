@@ -20,6 +20,7 @@ use App\Http\Controllers\API\admin\AdminContactusController;
 use App\Http\Controllers\api\CityController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\SearchController;
+use App\Http\Controllers\API\admin\AdminTeamController;
 
 
 
@@ -54,11 +55,9 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::put('/admin/rejectedAdvertisement/{advertisement_id}',[AdminAdvertisementController::class,'rejectedRequest']);
    //about
     Route::post('/admin/about/store',[AdminAboutController::class,'store']);
-    Route::get('/admin/about/list',[AdminAboutController::class,'index']);
     Route::post('/admin/about/update/{about_id}',[AdminAboutController::class,'update']);
     Route::delete('/admin/about/delete/{about_id}',[AdminAboutController::class,'destroy']);
     //follow_us
-    Route::get('/admin/follow_us/list',[AdminFollowUsController::class,'index']);
     Route::post('/admin/follow_us/update/{id}',[AdminFollowUsController::class,'update']);
     Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
@@ -68,7 +67,15 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
 
 
 
+    Route::post('/admin/team/store',[AdminTeamController::class,'store']);
+    Route::post('/admin/team/update/{team_id}',[AdminTeamController::class,'update']);
+    Route::delete('/admin/team/destroy/{team_id}',[AdminTeamController::class,'destroy']);
+
 });
+Route::get('/about/list',[AdminAboutController::class,'index']);
+Route::get('/follow_us/list',[AdminFollowUsController::class,'index']);
+Route::get('/teams/list',[AdminTeamController::class,'index']);
+
 
 //middleware for super admin only
 Route::middleware(['SuperAdmin','auth:api'])->group(function () {

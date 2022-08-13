@@ -27,7 +27,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|exists:users|email',
-            'password' => 'required|string|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
+            'password' => 'required|string|min:8',
         ], [
             'email.required' => 'برجاء ادخال البريد الإلكتروني ',
             'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
@@ -42,14 +42,16 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         $token = Auth::attempt($credentials);
-        if ($request->user()->status == 'is_active') {
-//            dd('d');
-            if (!$token) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'غير مصرح لك بالدخول',
-                ], 401);
-            } elseif ($token && \auth()->user()->email_verified_at != null) {
+//        dd('d');
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'غير مصرح لك بالدخول',
+            ], 401);
+        }
+        if ($request->user()->status =='is_active') {
+//
+            if ($token && \auth()->user()->email_verified_at != null) {
                 $user = Auth::user();
                 return response()->json([
                     'status' => 'success',
