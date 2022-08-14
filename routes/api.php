@@ -71,7 +71,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::post('/admin/team/store',[AdminTeamController::class,'store']);
     Route::post('/admin/team/update/{team_id}',[AdminTeamController::class,'update']);
     Route::delete('/admin/team/destroy/{team_id}',[AdminTeamController::class,'destroy']);
-    
+
 
 });
 Route::get('/about/list',[AdminAboutController::class,'index']);
@@ -160,6 +160,7 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/verify',[AuthController::class,'verifyUser']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/password/email', [ResetPasswordController::class,'getResetToken']);
+Route::post('/password/verify', [ResetPasswordController::class,'verify']);
 Route::get('/Home',[ HomeController::class,'index']);
 Route::get('/search',[SearchController::class,'search']);
 Route::get('/city_search',[SearchController::class,'city_choices']);
