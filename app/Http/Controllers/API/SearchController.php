@@ -85,7 +85,8 @@ class SearchController extends Controller
                 ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();   
                   return response()->json($search_results);
             }else{
-                return response()->json(["message"=>"من فضلك ادخل كلمات البحث "]);
+                $alladvertisement = Advertisement::where([["status", "not rented"],["control", "accepted"]])->get();
+            return response()->json(["advertisements"=>$alladvertisement]);
             }
 
 
@@ -162,7 +163,8 @@ class SearchController extends Controller
             ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();   
               return response()->json($search_results);
         }else{
-            return response()->json(["message"=>"من فضلك ادخل كلمات البحث "]);
+            $alladvertisement = Advertisement::where([["status", "not rented"],["control", "accepted"]])->get();
+            return response()->json(["advertisements"=>$alladvertisement]);
         }
 
     }
