@@ -16,16 +16,16 @@ var pusher = new Pusher('dd3cfafeb7c0b16de8e9', {
 
     var channel = pusher.subscribe('NewChannel2');
     channel.bind('ConfirmOwnerRequestFromAdmin', function(data) {
-    
+
       alert(JSON.stringify(data));
 
-      
+
     });
   </script>
 </head>
 <body>
   <h1>Pusher Test</h1>
-  
+
   <p>
     Try publishing an event to channel <code>my-channel</code>
     with event name <code>my-event</code>.

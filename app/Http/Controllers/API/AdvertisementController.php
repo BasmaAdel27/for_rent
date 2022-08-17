@@ -135,7 +135,6 @@ class AdvertisementController extends Controller
         {
             $imageURL = cloudinary()->upload($image->getRealPath())->getSecurePath();
 
-
             $ad_image []= Advertisement_image::create([
                 "image_name" =>  $imageURL,
                 "advertisement_id"=> $advertisement->id

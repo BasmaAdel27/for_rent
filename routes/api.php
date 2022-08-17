@@ -21,6 +21,7 @@ use App\Http\Controllers\api\CityController;
 use App\Http\Controllers\api\HomeController;
 use App\Http\Controllers\api\SearchController;
 use App\Http\Controllers\API\admin\AdminTeamController;
+use App\Http\Controllers\PaymentController;
 
 
 
@@ -103,7 +104,8 @@ Route::middleware(['renter','auth:api'])->group(function () {
     //favourite
     Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
     Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
-
+    Route::post('/paymentmethod',[PaymentController::class,'payment']);
+    Route::get('/renter/advertisementrented',[PaymentController::class,'renterPayment']);
 
 
 
@@ -130,7 +132,8 @@ Route::get('/declined_advertisement',[AdvertisementController::class,'declined']
 Route::get('/owner_profile',[OwnerprofileController::class,'index']);
 Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
 Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
-
+Route::get('/cities',[CityController::class,'show']);
+Route::get('/owner/advertisementrented',[PaymentController::class,'ownerPayment']);
 
 
 
