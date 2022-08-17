@@ -47,8 +47,8 @@ class AdvertisementController extends Controller
     public function create(Request $request )
     {
         $validator =Validator::make($request->all(),[
-            'title' => 'required|string|min:10|unique:advertisements|max:200',
-            'description' => 'required|string|min:20|max:300',
+            'title' => 'required|string|min:10|unique:advertisements',
+            'description' => 'required|string|min:20',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
@@ -56,7 +56,6 @@ class AdvertisementController extends Controller
             'beds_num'=>'required|numeric',
             'level'=>'required|numeric',
             'type'=>'required',
-            'status' => "required",
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
             'address' => 'required|max:40|min:10|string',
@@ -68,12 +67,9 @@ class AdvertisementController extends Controller
             'title.required' =>'برجاء ادخال عنوان الاعلان',
             'title.unique' => 'يجب ان يكون اسم الاعلان مميز و غير مكرر يرجاء اخال عنوان اخر ',
             'title.min' => 'برجاء ادخال عنوان لا تقل حروفه عن 20 حرف ',
-            'title.max' => 'اقصى حد للعنوان هو 200 حرف',
-
 
             "description.required" => "وصف الاعلان مطلوب",
             "description.min" => "برجاء ادخال عدد حروف لا تقل عن 20 حرف لوصف الاعلان",
-            "description.max" => "اقصي حد للحروف المطلو ادخالها هو 300 حرف",
 
 
             'price.required' => "برجاء ادخال السعر ",
@@ -91,7 +87,6 @@ class AdvertisementController extends Controller
             'level.numeric' => 'برجاء ادخال كلمه رقم ',
             'furniture.required' =>'برجاء ادخال نعم او لا ',
             'type.required' => 'برجاء ادخال النوع شقه ام ستوديو ام غرقة نوم ام سرير ',
-            'status.required' => 'برجاء ادخال حالة العقار ماجر ام لا',
             'area.required' => 'برجاء ادخال المساحه الخاصه بالاعلان',
             'area.numeric' => 'برجاء ادخال رقم ',
             'address.required' => 'برجاء ادخال عنوان الاعلان',
@@ -118,6 +113,8 @@ class AdvertisementController extends Controller
        "bedroom_num" => $request->bedroom_num,
         "bathroom_num" => $request->bathroom_num,
         "beds_num"=> $request->beds_num,
+        "status"=>"not rented",
+        "control"=>"pending",
         "level" => $request->level,
         "furniture "=> $request->furniture,
         "type" => $request->type,
@@ -155,15 +152,18 @@ class AdvertisementController extends Controller
     ];
     event(new AddAdvertisement($add_advertisement_data));
     //store in table notification
+    $admins = User::where("type","admin")->get(); 
+    foreach($admins as $admin){
     $notification = New Notification ;
-    $notification->user_id = 1;    //ADMIN ID
+    $notification->user_id = $admin->id;    //ADMIN ID
     $notification->advertisement_id = $advertisement->id;
     $notification->content = $add_advertisement_data["message"];
     $notification->status = "not_red";
     $notification->sent_at =$add_advertisement_data["time"];
     $notification->save();
+    }
 
-    return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image] );
+    return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image ] );
 
     }
 
@@ -258,8 +258,8 @@ class AdvertisementController extends Controller
 
 
         $validator =Validator::make($request->all(),[
-            'title' => 'required|string|min:10|max:200',
-            'description' => 'required|string|min:20|max:300',
+            'title' => 'required|string|min:10',
+            'description' => 'required|string|min:20',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
@@ -278,12 +278,10 @@ class AdvertisementController extends Controller
         ],[
             'title.required' =>'برجاء ادخال عنوان الاعلان',
             'title.min' => 'برجاء ادخال عنوان لا تقل حروفه عن 20 حرف ',
-            'title.max' => 'اقصى حد للعنوان هو 200 حرف',
 
 
             "description.required" => "وصف الاعلان مطلوب",
             "description.min" => "برجاء ادخال عدد حروف لا تقل عن 20 حرف لوصف الاعلان",
-            "description.max" => "اقصي حد للحروف المطلو ادخالها هو 300 حرف",
 
 
             'price.required' => "برجاء ادخال السعر ",
