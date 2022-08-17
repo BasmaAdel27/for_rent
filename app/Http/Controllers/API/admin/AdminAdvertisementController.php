@@ -55,6 +55,7 @@ class AdminAdvertisementController extends Controller
                 
                 "message"=>'تم قبول الاعلان بنجاح', 
                 'advertisement'=>$advertisement->title,
+                "user_id"=>$advertisement->user_id,
                 "time" => carbon::now()
             ];
             event(new ConfirmOwnerRequestFromAdmin($confirm_notification_data ));

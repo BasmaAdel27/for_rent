@@ -58,7 +58,7 @@ class AdvertisementController extends Controller
             'type'=>'required',
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
-            'address' => 'required|max:40|min:10|string',
+            'address' => 'required|max:40|string',
             'image_name' => 'required|array|nullable',
         'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
 
@@ -145,6 +145,7 @@ class AdvertisementController extends Controller
         $advertisement->advertisement_image()->saveMany($ad_image);
     }
     //end store image
+    //start notification data 
     $add_advertisement_data=[
         "advertisement" => $advertisement,
         "message"=>" تم اضافة اعلان من قبل المالك " . Auth::user()->name ."في انتظار موافقتك",
@@ -270,7 +271,7 @@ class AdvertisementController extends Controller
             'status' => "required",
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
-            'address' => 'required|max:40|min:10|string',
+            'address' => 'required|max:40|string',
             'city_id'=>'required',
             'image_name' => 'required|array',
             'image_name.*' => 'image|mime:jpeg,png,jpg,gif,svg',

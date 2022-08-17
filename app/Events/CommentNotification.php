@@ -16,8 +16,8 @@ class CommentNotification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $adsvertisement_id ;
-    public $renter_id ;
+    public $advertisement_owner_id ;
+    public $adsvertisement_title;
     public $content ;
     public $time ;
     public $review_comment;
@@ -32,9 +32,9 @@ class CommentNotification implements ShouldBroadcast
 
     {
 
-        $this->adsvertisement_id = $Notification_comment_data["adsvertisement_id"];
-        $this->renter_id = $Notification_comment_data[ "renter_id"];
+        $this->adsvertisement_title = $Notification_comment_data["adsvertisement_title"];
 
+        $this->advertisement_owner_id = $Notification_comment_data["advertisement_owner_id"];
 
         $this->content = $Notification_comment_data["content"];
 

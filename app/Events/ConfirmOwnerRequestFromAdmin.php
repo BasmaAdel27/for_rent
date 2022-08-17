@@ -22,11 +22,13 @@ class ConfirmOwnerRequestFromAdmin implements ShouldBroadcast
     public $message;
     public $advertisement;
     public $time;
+    public $user_id;
     public function __construct($confirm_notification_data )
     {
         $this->message = $confirm_notification_data["message"] ;
         $this->advertisement=$confirm_notification_data["advertisement"] ;
         $this->time=$confirm_notification_data ["time"];
+        $this->user_id=$confirm_notification_data["user_id"];
 
     }
 
