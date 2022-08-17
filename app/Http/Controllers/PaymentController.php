@@ -60,6 +60,8 @@ class PaymentController extends Controller
         $advertisement=Advertisement::where([['id',$payment->advertisement_id],['control','accepted'],['user_id',$payment->owner_id]])->first();
         $advertisement->status='rented';
         $advertisement->save();
+        //start payment notification 
+        
         return  response()->json(['success'=>true,'advertisement'=>$advertisement,'payment'=>$payment]);
     }
 

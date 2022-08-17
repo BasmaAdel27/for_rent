@@ -71,13 +71,14 @@ class RateController extends Controller
 
 
             $Notification_comment_data=[
-                "adsvertisement_id" => $advertisement_id,
-                "renter_id" => Auth::id(),
+                "adsvertisement_title" => $advertisement_id->title,
+                
                 "renter_name"=>Auth::user()->name,
                 "content" => " تم اضافة مراجعه على الاعلان الخاص بك من قبل " . Auth::user()->name ,
                 "time" => carbon::now(),
                 "review_comment" => $request->comment,
-                "review_count" => $request->count
+                "review_count" => $request->count,
+                "advertisement_owner_id" => $advertisement_id->user_id
             ];
             event(new CommentNotification($Notification_comment_data));
 

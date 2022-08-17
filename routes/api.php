@@ -63,9 +63,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
     Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
-    //city
-    Route::post('/cities',[CityController::class,'store']);
-    Route::get('/cities',[CityController::class,'show']);
+   
 
 
 
@@ -170,6 +168,10 @@ Route::get('/search',[SearchController::class,'search']);
 Route::get('/city_search',[SearchController::class,'city_choices']);
 Route::get('/type_search',[SearchController::class,'type_choices']);
 Route::get('/bedroom_search',[SearchController::class,'bedroom_choices']);
+
+//city
+    Route::post('/cities',[CityController::class,'store']);
+    Route::get('/cities',[CityController::class,'show']);
 
 
 
