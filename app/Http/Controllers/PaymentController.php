@@ -85,6 +85,17 @@ class PaymentController extends Controller
         }
     }
 
+    public function paymentAdmin(){
+        $data=Paymentmethod::with('advertisement','user','owner')->get();
+        if($data != null){
+            return response()->json(['success'=>true,'data'=>$data]);
+        }else{
+            return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+
+        }
+
+    }
+
     /**
      * Display the specified resource.
      *

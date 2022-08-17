@@ -72,6 +72,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::post('/admin/team/store',[AdminTeamController::class,'store']);
     Route::post('/admin/team/update/{team_id}',[AdminTeamController::class,'update']);
     Route::delete('/admin/team/destroy/{team_id}',[AdminTeamController::class,'destroy']);
+    Route::get('/allRented/paymentmethod',[PaymentController::class,'paymentAdmin']);
 
 
 });
