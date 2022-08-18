@@ -48,7 +48,7 @@ class AdvertisementController extends Controller
     {
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10|unique:advertisements',
-            'description' => 'required|string|min:20',
+            'description' => 'required|text',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
@@ -260,7 +260,7 @@ class AdvertisementController extends Controller
 
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10',
-            'description' => 'required|string|min:20',
+            'description' => 'required|text',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
@@ -307,7 +307,7 @@ class AdvertisementController extends Controller
             "city_id.required" => "برجاء ادخال اسم المدينه او المحافظه الحاصه بالاعلان",
             "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
                 "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
-                "image_name.mimes" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
+                "image_name.mime" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
 
 
 

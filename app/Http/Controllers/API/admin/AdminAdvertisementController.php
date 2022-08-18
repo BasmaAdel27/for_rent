@@ -53,7 +53,7 @@ class AdminAdvertisementController extends Controller
             //fire_confirm event 
             $confirm_notification_data = [  
                 
-                "message"=>'تم قبول الاعلان بنجاح', 
+                "message"=>'تم قبول الاعلان بنجاح'.' : '. $advertisement->title, 
                 'advertisement'=>$advertisement->title,
                 "user_id"=>$advertisement->user_id,
                 "time" => carbon::now()
