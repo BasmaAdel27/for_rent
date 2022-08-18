@@ -233,13 +233,18 @@ class AdvertisementController extends Controller
      */
     public function show(Advertisement $advertisement_id)
     {
-        $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented']])
+        $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented'],['control','accepted']])
             ->with('advertisement_image','user')->get();
         $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
         $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
         $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)->withAvg('ratings','count')->withCount('ratings')
             ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->with('advertisement_image')->get();
         return response()->json(['advertisement'=>$advertisement,'reviews'=>$rating,'reviews_num'=>count($rating),'reviews_avg'=>$rating->avg('count'),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
+    }
+
+    public function editAdvertisement($adver_id){
+        $advertisement=Advertisement::where([['id',$adver_id],['user_id',Auth::user()->id]])->with('advertisement_image','user')->get();
+        return response()->json(['advertisement'=>$advertisement]);
     }
 
 
