@@ -145,7 +145,7 @@ class AdvertisementController extends Controller
         $advertisement->advertisement_image()->saveMany($ad_image);
     }
     //end store image
-    //start notification data 
+    //start notification data
     $add_advertisement_data=[
         "advertisement" => $advertisement,
         "message"=>" تم اضافة اعلان من قبل المالك " . Auth::user()->name ."في انتظار موافقتك",
@@ -153,7 +153,7 @@ class AdvertisementController extends Controller
     ];
     event(new AddAdvertisement($add_advertisement_data));
     //store in table notification
-    $admins = User::where("type","admin")->get(); 
+    $admins = User::where("type","admin")->get();
     foreach($admins as $admin){
     $notification = New Notification ;
     $notification->user_id = $admin->id;    //ADMIN ID
@@ -223,7 +223,7 @@ class AdvertisementController extends Controller
      */
     public function show(Advertisement $advertisement_id)
     {
-        $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented'],['control','accepted']])
+        $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented']])
             ->with('advertisement_image','user')->get();
         $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
         $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
