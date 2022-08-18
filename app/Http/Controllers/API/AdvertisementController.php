@@ -260,7 +260,7 @@ class AdvertisementController extends Controller
 
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10',
-            'description' => 'required|text',
+            'description' => 'required|string',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
@@ -274,7 +274,7 @@ class AdvertisementController extends Controller
             'address' => 'required|string',
             'city_id'=>'required',
             'image_name' => 'required|array',
-            'image_name.*' => 'image|mime:jpeg,png,jpg,gif,svg',
+            'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
 
         ],[
             'title.required' =>'برجاء ادخال عنوان الاعلان',
