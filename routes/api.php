@@ -63,7 +63,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
     Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
-   
+
 
 
 
@@ -105,6 +105,7 @@ Route::middleware(['renter','auth:api'])->group(function () {
     Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
     Route::post('/paymentmethod',[PaymentController::class,'payment']);
     Route::get('/renter/advertisementrented',[PaymentController::class,'renterPayment']);
+    Route::get('/renter/myfavourite',[FavouriteController::class,'index']);
 
 
 

@@ -60,8 +60,8 @@ class PaymentController extends Controller
         $advertisement=Advertisement::where([['id',$payment->advertisement_id],['control','accepted'],['user_id',$payment->owner_id]])->first();
         $advertisement->status='rented';
         $advertisement->save();
-        //start payment notification 
-        
+        //start payment notification
+
         return  response()->json(['success'=>true,'advertisement'=>$advertisement,'payment'=>$payment]);
     }
 
@@ -69,30 +69,32 @@ class PaymentController extends Controller
 
     public function renterPayment(){
         $data=Paymentmethod::where('user_id',Auth::user()->id)->with('advertisement','user')->get();
-        if($data != null){
-        return response()->json(['success'=>true,'data'=>$data]);
-        }else{
+        if($data->isEmpty()) {
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+
+        }else{
+            return response()->json(['success'=>true,'data'=>$data]);
 
         }
     }
 
     public function ownerPayment(){
         $data=Paymentmethod::where('owner_id',Auth::user()->id)->with('advertisement','user','owner')->get();
-        if($data != null){
-            return response()->json(['success'=>true,'data'=>$data]);
-        }else{
+        if($data->isEmpty()) {
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+
+        }else{
+            return response()->json(['success'=>true,'data'=>$data]);
 
         }
     }
 
     public function paymentAdmin(){
         $data=Paymentmethod::with('advertisement','user','owner')->get();
-        if($data != null){
-            return response()->json(['success'=>true,'data'=>$data]);
-        }else{
+        if($data->isEmpty()) {
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+        }else{
+            return response()->json(['success'=>true,'data'=>$data]);
 
         }
 
