@@ -48,7 +48,7 @@ class AdvertisementController extends Controller
     {
         $validator =Validator::make($request->all(),[
             'title' => 'required|string|min:10|unique:advertisements',
-            'description' => 'required|text',
+            'description' => 'required|string',
             'price'=>'required|numeric',
             'bedroom_num'=>'required|numeric',
             'bathroom_num'=>'required|numeric',
@@ -183,37 +183,47 @@ class AdvertisementController extends Controller
     {
         $user = Auth::user();
         $not_rented =$user->advertisement()->whereStatus("not rented")->whereControl("accepted")->get();
-        return  response()->json([$not_rented,  $user]);
+        $count =$user->advertisement()->whereStatus("not rented")->whereControl("accepted")->count();
+
+        return  response()->json([$not_rented, "count"=>$count, $user ]);
     }
 
     public function rented()
     {
         $user = Auth::user();
         $rented =$user->advertisement()->whereStatus("rented")->whereControl("accepted")->get();
+        $count =$user->advertisement()->whereStatus("rented")->whereControl("accepted")->count();
 
-        return  response()->json([$rented, $user ]);
+
+        return  response()->json([$rented, "count"=>$count, $user ]);
     }
 
     public function pending()
     {
         $user = Auth::user();
         $pending =$user->advertisement()->whereControl("pending")->with("advertisement_image")->get();
+        $count =$user->advertisement()->whereControl("pending")->with("advertisement_image")->count();
 
-        return  response()->json([$pending, $user ]);
+
+        return  response()->json([$pending,"count"=>$count, $user ]);
     }
     public function accepted()
     {
         $user = Auth::user();
         $accepted =$user->advertisement()->whereControl("accepted")->with("advertisement_image")->get();
+        $count =$user->advertisement()->whereControl("accepted")->with("advertisement_image")->count();
 
-        return  response()->json([$accepted, $user ]);
+
+        return  response()->json([$accepted,"count"=>$count, $user ]);
     }
     public function declined()
     {
         $user = Auth::user();
         $declined =$user->advertisement()->whereControl("declined")->with("advertisement_image")->get();
+        $count =$user->advertisement()->whereControl("declined")->with("advertisement_image")->count();
 
-        return  response()->json([$declined, $user ]);
+
+        return  response()->json([$declined,"count"=>$count, $user ]);
     }
     /**
      * Display the specified resource.
