@@ -134,6 +134,7 @@ Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
 Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 Route::get('/cities',[CityController::class,'show']);
 Route::get('/owner/advertisementrented',[PaymentController::class,'ownerPayment']);
+Route::get('/edit/advertisement/{adver_id}',[AdvertisementController::class,'editAdvertisement']);
 
 
 
