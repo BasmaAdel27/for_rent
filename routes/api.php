@@ -119,7 +119,7 @@ Route::middleware(['renter','auth:api'])->group(function () {
 Route::middleware(['owner','auth:api'])->group(function () {
     Route::post('/advertisement',[AdvertisementController::class,'create']);
 Route::post('/advertisement/{id}',[AdvertisementController::class,'update']);
-Route::get('/advertisement/{id}',[AdvertisementController::class,'destroy']);
+Route::delete('/advertisement/{id}',[AdvertisementController::class,'destroy']);
 
 Route::get('/notrented_advertisement',[AdvertisementController::class,'not_rented']);
 Route::get('/rented_advertisement',[AdvertisementController::class,'rented']);
