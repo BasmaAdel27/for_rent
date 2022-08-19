@@ -288,7 +288,7 @@ class AdvertisementController extends Controller
             'furniture'=>"required",
             'address' => 'required|string',
             'city_id'=>'required',
-            'image_name' => 'required|array',
+            'image_name' => 'array',
             'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
 
         ],[
@@ -320,7 +320,6 @@ class AdvertisementController extends Controller
             'area.numeric' => 'برجاء ادخال رقم ',
             'address.required' => 'برجاء ادخال عنوان الاعلان',
             "city_id.required" => "برجاء ادخال اسم المدينه او المحافظه الحاصه بالاعلان",
-            "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
                 "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
                 "image_name.mime" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
 
@@ -356,8 +355,9 @@ class AdvertisementController extends Controller
     ]);
     //update image
     $advertisement = Advertisement::find($id);
-    $advertisement->advertisement_image()->delete();
-    $photos = $request->file('image_name');
+    if( ($request->file('image_name'))){
+        $advertisement->advertisement_image()->delete();
+        $photos = $request->file('image_name');
 
 
 
@@ -373,10 +373,14 @@ class AdvertisementController extends Controller
 
         }
 
+    }else{
+        $ad_img = ["لم يتم تعديل الصور"];
+    }
+
 
     //end update image
         //update
-       return response()->json( ["advertisement"=>$advertisement , "user"=>Auth::user(), "images" => $ad_img]);
+       return response()->json( ["advertisement" => $advertisement,"message"=>"تم التعديل بنجاح" , "user"=>Auth::user(), "images" => $ad_img]);
     }
 
     /**
