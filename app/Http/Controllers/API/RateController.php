@@ -74,7 +74,7 @@ class RateController extends Controller
                 "adsvertisement_title" => $advertisement_id->title,
                 
                 "renter_name"=>Auth::user()->name,
-                "content" => " تم اضافة مراجعه على الاعلان الخاص بك من قبل " . Auth::user()->name ,
+                "content" => " تم اضافة مراجعه على الاعلان الخاص بك من قبل " ." ". Auth::user()->name ." : "  . $request->comment  ,
                 "time" => carbon::now(),
                 "review_comment" => $request->comment,
                 "review_count" => $request->count,
@@ -93,7 +93,7 @@ class RateController extends Controller
            
 
 
-            return response()->json(['message'=>'تم تقييم الاعلان بنجاح','rate'=>$rate],200);
+            return response()->json(['message'=>'تم تقييم الاعلان بنجاح','notification'=>$notification],200);
 
 
     }
