@@ -150,7 +150,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
     Route::post('/profile_setting_name_phone',[OwnerprofilesettinController::class,'name_phone_setting']);
     Route::post('/profile_setting_password',[OwnerprofilesettinController::class,'update_password']);
+    Route::post('/profile_setting_update_image/{id}',[OwnerprofilesettinController::class,'update_image']);
 
+    
 
 
 
