@@ -176,4 +176,76 @@ class OwnerprofilesettinController extends Controller
     {
         //
     }
+    // update number and name 
+    public function name_phone_setting(Request $request){
+        $validator =Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'phone'=>'required|min:11|numeric|regex:/^01[0125][0-9]{8}$/',
+           
+
+
+        ],[
+            'name.required' => 'برجاء ادخال اسم المستخدم',
+            'name.string' => 'لابد ان يكون اسم المستخدم بطريقه صحيحه',
+            'phone.min' => 'رقم الهاتف لابد ان يكون مكون من 11 رقم ',
+            'phone.required' => 'برجاء ادخال رقم الهاتف الخاص بك',
+            'phone.unique'=>'رقم الهاتف مسجل بالفعل',
+            'phone.regex'=>'لابد ان يبدا هاتفك ب 015,012,011,010',]);
+            if ($validator->fails()) {
+                return response()->json(['error'=>$validator->errors()], 401);
+            }
+
+            $user= Auth::user(); 
+            $update_user=$user->update([
+                'name' => $request->name,
+                'phone'=>$request->phone,
+            ]);
+            return response()->json(["success"=> $update_user, "message" => "تم تحديث الاسم و رقم التليفون بنجاح"]);
+
+
+
+
+
+
+    } 
+
+    //update password 
+    public function update_password(Request $request){
+        $user= Auth::user(); 
+
+        $validator =Validator::make($request->all(), [
+            'old_password' => 'required',
+           'new_password' => 'string|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/'
+
+       ],['new_password.required' => 'برجاء ادخال كلمه المرور',
+       'new_password.min' => 'لابد ان تكون كلمه المرور اكثر من 8',
+       'new_password.regex'=>'يجب أن تتكون كلمة المرور الخاصة بك من أكثر من 8 أحرف ، ويجب أن تحتوي على الأقل على حرف كبير واحد ، وحرف صغير واحد ، ورقم واحد ، وحرف خاص واحد',
+       ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+            }
+
+            if (Auth::attempt(['password' => $request->old_password , "email" => $user->email]) && !(Hash::check($request->new_password, $user->password))) { 
+                $user->fill([
+                 'password' => Hash::make($request->new_password)
+                 ])->save();
+                 $message =" تم تحديث كلمة المرور بنجاح";
+               
+                    
+                }elseif( Hash::check($request->new_password, $user->password)&& Auth::attempt(['password' => $request->old_password , "email" => $user->email])){
+                    $message = "كلمة المرور التي ادخلتها هي كلمة المرور القديمه الخاصه بك من فضلك ادخل كلمة مرور جديده ";
+        
+                }
+                else{
+                   
+                        $message =" تم حفظ كلمة المرور القديمه  كلمة المرور التي ادخلتها لا تطابق كلمة المرور الخاصه بك ";
+                }
+              
+                return response()->json(["message"=>$message ]);
+
+
+    }
+       
+   
 }
