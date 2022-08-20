@@ -296,8 +296,7 @@ class AdvertisementController extends Controller
             'furniture'=>"required",
             'address' => 'required|string',
             'city_id'=>'required',
-            'image_name' => 'array',
-            'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
+
 
         ],[
             'title.required' =>'برجاء ادخال عنوان الاعلان',
@@ -328,8 +327,6 @@ class AdvertisementController extends Controller
             'area.numeric' => 'برجاء ادخال رقم ',
             'address.required' => 'برجاء ادخال عنوان الاعلان',
             "city_id.required" => "برجاء ادخال اسم المدينه او المحافظه الحاصه بالاعلان",
-                "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
-                "image_name.mime" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
 
 
 
@@ -363,32 +360,32 @@ class AdvertisementController extends Controller
     ]);
     //update image
     $advertisement = Advertisement::find($id);
-    if( ($request->file('image_name'))){
-        $advertisement->advertisement_image()->delete();
-        $photos = $request->file('image_name');
-
-
-
-
-        foreach ($photos as $photo) {
-
-            $imageURL = cloudinary()->upload($photo->getRealPath())->getSecurePath();
-            $adPhoto = new Advertisement_image;
-            $adPhoto->advertisement_id = $advertisement->id;
-           $ad_img[]= $adPhoto->image_name   = $imageURL;
-            $adPhoto->save();
-
-
-        }
-
-    }else{
-        $ad_img = ["لم يتم تعديل الصور"];
-    }
-
+//    if( ($request->file('image_name'))){
+//        $advertisement->advertisement_image()->delete();
+//        $photos = $request->file('image_name');
+//
+//
+//
+//
+//        foreach ($photos as $photo) {
+//
+//            $imageURL = cloudinary()->upload($photo->getRealPath())->getSecurePath();
+//            $adPhoto = new Advertisement_image;
+//            $adPhoto->advertisement_id = $advertisement->id;
+//           $ad_img[]= $adPhoto->image_name   = $imageURL;
+//            $adPhoto->save();
+//
+//
+//        }
+//
+//    }else{
+//        $ad_img = ["لم يتم تعديل الصور"];
+//    }
+//
 
     //end update image
         //update
-       return response()->json( ["advertisement" => $advertisement,"message"=>"تم التعديل بنجاح" , "user"=>Auth::user(), "images" => $ad_img]);
+       return response()->json( ["advertisement" => $advertisement,"message"=>"تم التعديل بنجاح" , "user"=>Auth::user()]);
     }
 
     /**
