@@ -73,7 +73,7 @@ class PaymentController extends Controller
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
 
         }else{
-            return response()->json(['success'=>true,'data'=>$data]);
+            return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
 
         }
     }
@@ -84,7 +84,7 @@ class PaymentController extends Controller
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
 
         }else{
-            return response()->json(['success'=>true,'data'=>$data]);
+            return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
 
         }
     }
