@@ -4,9 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Advertisement;
+use App\Models\Advertisement_image;
 use App\Models\Favourit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
 
@@ -19,11 +22,12 @@ class FavouriteController extends Controller
      */
     public function index()
     {
-        $data=Favourit::where('user_id',Auth::user()->id)->with('advertisement','user')->get();
+        $data = Favourit::where('user_id', Auth::user()->id)->with('advertisement.advertisement_image','user')->get();
+
         if($data->isEmpty()) {
-            return response()->json(['message'=>'لا توجد اعلانات في مفضلتك']);
+            return response()->json(['message'=>'لا توجد اعلانات في مفضلتك','count'=>count($data)]);
         }else{
-            return response()->json(['success' => true, 'data' => $data]);
+            return response()->json(['success' => true, 'data' => $data ,'count'=>count($data)]);
 
         }
     }
