@@ -133,6 +133,7 @@ Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
 Route::get('/cities',[CityController::class,'show']);
 Route::get('/owner/advertisementrented',[PaymentController::class,'ownerPayment']);
 Route::get('/edit/advertisement/{adver_id}',[AdvertisementController::class,'editAdvertisement']);
+Route::post('/edit/image/{adver_id}/{img_id}',[AdvertisementController::class,'updateImage']);
 
 
 
@@ -150,7 +151,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/profile_setting_name_phone',[OwnerprofilesettinController::class,'name_phone_setting']);
     Route::post('/profile_setting_password',[OwnerprofilesettinController::class,'update_password']);
 
-    
+
 
 
 
@@ -179,7 +180,7 @@ Route::get('/bedroom_search',[SearchController::class,'bedroom_choices']);
     Route::post('/cities',[CityController::class,'store']);
     Route::get('/cities',[CityController::class,'show']);
 
-//owner profile for guest 
+//owner profile for guest
 Route::get('/owner_profile_for_public/{id}',[OwnerprofileController::class,'owner_profile_for_public']);
 
 

@@ -247,6 +247,14 @@ class AdvertisementController extends Controller
         return response()->json(['advertisement'=>$advertisement]);
     }
 
+    public function updateImage(Request $request,$adver_id,$img_id){
+        $image=Advertisement_image::where([['id',$img_id],['advertisement_id',$adver_id]])->with('advertisement')->first();
+        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
+        $image->image_name=$imageURL;
+        $image->save();
+        return response()->json(['success'=>true,'message'=>'تم التعديل بنجاح','image'=>$image]);
+    }
 
     /**
      * Show the form for editing the specified resource.
