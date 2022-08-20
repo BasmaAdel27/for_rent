@@ -353,10 +353,11 @@ class AdvertisementController extends Controller
         "type" => $request->type,
         "area"=> $request->area,
         "address" => $request->address,
-        "control" =>"pending",
         "price"=>$request->price,
         "city_id" =>$request->city_id
     ]);
+    $advertisement->control="pending";
+    $advertisement->save();
     //update image
     $advertisement = Advertisement::find($id);
 //    if( ($request->file('image_name'))){

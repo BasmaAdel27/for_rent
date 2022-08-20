@@ -42,12 +42,12 @@ return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"pending"=
         $user = User::find($id);
 
 
-    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->get();
-    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']]);
+    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->with("user")->get();
+    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']])->with("user")->get();
  
     
 
-return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"accepted-rented"=>$accepted_rented] ,200);
+return response()->json(["acceptedNotRented"=>$accepted_not_rented ,"acceptedRented"=>$accepted_rented] ,200);
 
 
 // return response()->json([$user] ,200);

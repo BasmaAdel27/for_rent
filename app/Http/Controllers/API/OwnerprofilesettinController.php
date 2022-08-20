@@ -246,6 +246,26 @@ class OwnerprofilesettinController extends Controller
 
 
     }
-       
+     //update image 
+     function update_image(Request $request, $id){
+        $validator =Validator::make($request->all(), [
+            'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+            ],[
+                'image.required'=>'هذا الحقل مطلوب ادخاله',
+                 'image.mime'=>'صيغه الصوره غير مدعومه'
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json(['error'=>$validator->errors()], 401);
+                    }  
+                    $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
+                    $user= User::find($id);
+            
+                    $user->image=$imageURL;
+                    $user->save();
+                    return response()->json(['success'=>true,'message'=>'تم التعديل بنجاح','image'=>$user->image]);
+                }     
+     }  
    
-}
+
