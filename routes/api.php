@@ -102,7 +102,6 @@ Route::middleware(['renter','auth:api'])->group(function () {
     Route::get('/rate/delete/{advertisement_id}/{rate_id}',[RateController::class,'destroy']);
     //favourite
     Route::post('/addFavourite/{advertisement_id}',[FavouriteController::class,'store']);
-    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
     Route::post('/paymentmethod',[PaymentController::class,'payment']);
     Route::get('/renter/advertisementrented',[PaymentController::class,'renterPayment']);
     Route::get('/renter/myfavourite',[FavouriteController::class,'index']);
@@ -131,7 +130,6 @@ Route::get('/accepted_advertisement',[AdvertisementController::class,'accepted']
 Route::get('/declined_advertisement',[AdvertisementController::class,'declined']);
 Route::get('/owner_profile',[OwnerprofileController::class,'index']);
 Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
-Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
 Route::get('/cities',[CityController::class,'show']);
 Route::get('/owner/advertisementrented',[PaymentController::class,'ownerPayment']);
 Route::get('/edit/advertisement/{adver_id}',[AdvertisementController::class,'editAdvertisement']);
@@ -146,6 +144,8 @@ Route::get('/edit/advertisement/{adver_id}',[AdvertisementController::class,'edi
 Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/get_notification', [GetNotificationController::class,'view']);
+    Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
+
     Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
     Route::post('/profile_setting_name_phone',[OwnerprofilesettinController::class,'name_phone_setting']);
     Route::post('/profile_setting_password',[OwnerprofilesettinController::class,'update_password']);
@@ -178,6 +178,9 @@ Route::get('/bedroom_search',[SearchController::class,'bedroom_choices']);
 //city
     Route::post('/cities',[CityController::class,'store']);
     Route::get('/cities',[CityController::class,'show']);
+
+//owner profile for guest 
+Route::get('/owner_profile_for_public/{id}',[OwnerprofileController::class,'owner_profile_for_public']);
 
 
 

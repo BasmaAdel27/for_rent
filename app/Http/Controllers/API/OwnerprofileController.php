@@ -36,6 +36,24 @@ return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"pending"=
 
 
     }
+    //owner profile for public 
+    public function owner_profile_for_public($id)
+    {
+        $user = User::find($id);
+
+
+    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->get();
+    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']]);
+ 
+    
+
+return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"accepted-rented"=>$accepted_rented] ,200);
+
+
+// return response()->json([$user] ,200);
+
+    }
+
 
     /**
      * Show the form for creating a new resource.
