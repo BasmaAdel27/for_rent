@@ -70,7 +70,7 @@ class PaymentController extends Controller
     public function renterPayment(){
         $data=Paymentmethod::where('user_id',Auth::user()->id)->with('advertisement','user')->get();
         if($data->isEmpty()) {
-            return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
 
         }else{
             return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
@@ -81,7 +81,7 @@ class PaymentController extends Controller
     public function ownerPayment(){
         $data=Paymentmethod::where('owner_id',Auth::user()->id)->with('advertisement','user','owner')->get();
         if($data->isEmpty()) {
-            return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
 
         }else{
             return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
@@ -92,9 +92,9 @@ class PaymentController extends Controller
     public function paymentAdmin(){
         $data=Paymentmethod::with('advertisement','user','owner')->get();
         if($data->isEmpty()) {
-            return response()->json(['message'=> 'لا توجد اعلانات مؤجره']);
+            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
         }else{
-            return response()->json(['success'=>true,'data'=>$data]);
+            return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
 
         }
 
