@@ -14,19 +14,34 @@ class AdminAdvertisementController extends Controller
 {
     public function pendingRequest(){
         $advertisements=Advertisement::where('control','pending')->with('user')->get();
-            return response()->json(['pending_advertisement' => $advertisements]);
+        if($advertisements->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد اعلانات قيد الموافقه','counts'=>count($advertisements)]);
+        }else{
+            return response()->json(['pending_advertisement' => $advertisements,'counts'=>count($advertisements)]);
+
+        }
 
 
     }
 
     public function acceptedRequest(){
         $advertisements=Advertisement::where('control','accepted')->with('user')->get();
-        return response()->json(['accepted_advertisement' => $advertisements,'count'=>count($advertisements)]);
+        if($advertisements->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد اعلانات تمت الموافقه عليها','counts'=>count($advertisements)]);
+        }else{
+            return response()->json(['accepted_advertisement' => $advertisements,'count'=>count($advertisements)]);
+
+        }
     }
 
     public function declinedRequest(){
         $advertisements=Advertisement::where('control','declined')->with('user')->get();
-        return response()->json(['deslined_advertisement' => $advertisements,'count'=>count($advertisements)]);
+        if($advertisements->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد اعلانات ملغيه','counts'=>count($advertisements)]);
+        }else{
+            return response()->json(['deslined_advertisement' => $advertisements,'count'=>count($advertisements)]);
+
+        }
     }
 
     public function destroy(Advertisement $advertisement_id){
