@@ -13,23 +13,44 @@ class AdminUsersController extends Controller
 {
     public function AllRenters(){
         $renters=User::where([['type','renter'],['status','is_active']])->get();
-        return response()->json(['renters'=>$renters,'counts'=>count($renters)]);
+        if($renters->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد مستاجرين','counts'=>count($renters)]);
+        }else{
+            return response()->json(['renters'=>$renters,'counts'=>count($renters)]);
+
+        }
     }
 
     public function AllOwners(){
         $owners=User::where([['type','owner'],['status','is_active']])->get();
+        if($owners->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد ملاك','counts'=>count($owners)]);
+        }else{
+            return response()->json(['owners'=>$owners,'counts'=>count($owners)]);
+
+        }
         return response()->json(['owners'=>$owners,'counts'=>count($owners)]);
     }
 
     public function AllAdmins(){
         $admins=User::where([['type','admin'],['status','is_active']])->get();
-        return response()->json(['renters'=>$admins,'counts'=>count($admins)]);
+        if($admins->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد مسئولين','counts'=>count($admins)]);
+        }else{
+            return response()->json(['renters'=>$admins,'counts'=>count($admins)]);
+
+        }
     }
 
 
     public function AllBlocks(){
         $blocks=User::where('status','is_blocked')->get();
-        return response()->json(['blocks'=>$blocks,'counts'=>count($blocks)]);
+        if($blocks->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد محظورين','counts'=>count($blocks)]);
+        }else{
+            return response()->json(['blocks'=>$blocks,'counts'=>count($blocks)]);
+
+        }
     }
 
     public function destroy(User $userId){
