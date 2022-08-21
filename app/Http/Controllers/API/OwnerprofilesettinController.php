@@ -215,11 +215,14 @@ class OwnerprofilesettinController extends Controller
 
         $validator =Validator::make($request->all(), [
             'old_password' => 'required',
-           'new_password' => 'string|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/'
+            'new_password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
 
        ],['new_password.required' => 'برجاء ادخال كلمه المرور',
        'new_password.min' => 'لابد ان تكون كلمه المرور اكثر من 8',
+       
        'new_password.regex'=>'يجب أن تتكون كلمة المرور الخاصة بك من أكثر من 8 أحرف ، ويجب أن تحتوي على الأقل على حرف كبير واحد ، وحرف صغير واحد ، ورقم واحد ، وحرف خاص واحد',
+       'new_password.confirmed' => ' برجاء تأكيد كلمه المرور التي تم ادخالها',
+
        ]);
 
         if ($validator->fails()) {
