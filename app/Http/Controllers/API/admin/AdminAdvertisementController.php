@@ -14,19 +14,34 @@ class AdminAdvertisementController extends Controller
 {
     public function pendingRequest(){
         $advertisements=Advertisement::where('control','pending')->with('user')->get();
-            return response()->json(['pending_advertisement' => $advertisements]);
+        if($advertisements->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد اعلانات قيد الموافقه','counts'=>count($advertisements)]);
+        }else{
+            return response()->json(['pending_advertisement' => $advertisements,'counts'=>count($advertisements)]);
+
+        }
 
 
     }
 
     public function acceptedRequest(){
         $advertisements=Advertisement::where('control','accepted')->with('user')->get();
-        return response()->json(['accepted_advertisement' => $advertisements]);
+        if($advertisements->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد اعلانات تمت الموافقه عليها','counts'=>count($advertisements)]);
+        }else{
+            return response()->json(['accepted_advertisement' => $advertisements,'count'=>count($advertisements)]);
+
+        }
     }
 
     public function declinedRequest(){
         $advertisements=Advertisement::where('control','declined')->with('user')->get();
-        return response()->json(['deslined_advertisement' => $advertisements]);
+        if($advertisements->isEmpty()) {
+            return response()->json(['message'=>'لا يوجد اعلانات ملغيه','counts'=>count($advertisements)]);
+        }else{
+            return response()->json(['deslined_advertisement' => $advertisements,'count'=>count($advertisements)]);
+
+        }
     }
 
     public function destroy(Advertisement $advertisement_id){
@@ -42,7 +57,7 @@ class AdminAdvertisementController extends Controller
 
     public function confirmRequest(Advertisement $advertisement_id){
 
-       
+
         $advertisement=Advertisement::with('user')->find($advertisement_id->id);
 //        dd($advertisement->control);
         if ($advertisement->control == 'pending'){
@@ -50,10 +65,10 @@ class AdminAdvertisementController extends Controller
             $advertisement->save();
 
 
-            //fire_confirm event 
-            $confirm_notification_data = [  
-                
-                "message"=>'تم قبول الاعلان بنجاح'.' : '. $advertisement->title, 
+            //fire_confirm event
+            $confirm_notification_data = [
+
+                "message"=>'تم قبول الاعلان بنجاح'.' : '. $advertisement->title,
                 'advertisement'=>$advertisement->title,
                 "user_id"=>$advertisement->user_id,
                 "time" => carbon::now()
@@ -68,11 +83,11 @@ class AdminAdvertisementController extends Controller
         $notification->status = "not_red";
         $notification->sent_at =$confirm_notification_data["time"];
         $notification->save();
-           
+
             return response()->json(['message'=>'تم قبول الاعلان بنجاح','advertisement'=>$advertisement]);
-           
+
         }
-        
+
     }
 
     public function rejectedRequest(Advertisement $advertisement_id){
