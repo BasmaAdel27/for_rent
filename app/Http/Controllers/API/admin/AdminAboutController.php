@@ -88,7 +88,8 @@ class AdminAboutController extends Controller
      */
     public function edit($id)
     {
-        //
+        $about=About::find($id);
+        return response()->json(['data'=>$about]);
     }
 
     /**

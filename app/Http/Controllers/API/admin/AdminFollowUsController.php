@@ -60,7 +60,8 @@ class AdminFollowUsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $links=Follow_us::find($id);
+        return response()->json(['data'=>$links]);
     }
 
     /**

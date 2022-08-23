@@ -71,6 +71,10 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::post('/admin/team/update/{team_id}',[AdminTeamController::class,'update']);
     Route::delete('/admin/team/destroy/{team_id}',[AdminTeamController::class,'destroy']);
     Route::get('/allRented/paymentmethod',[PaymentController::class,'paymentAdmin']);
+    Route::get('/edit/team/{id}',[AdminTeamController::class,'edit']);
+    Route::post('/update/image/{id}',[AdminTeamController::class,'updateImage']);
+    Route::get('/edit/about/{id}',[AdminAboutController::class,'edit']);
+    Route::get('/edit/followUs/{id}',[AdminFollowUsController::class,'edit']);
 
 
 });
@@ -152,7 +156,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/profile_setting_password',[OwnerprofilesettinController::class,'update_password']);
     Route::post('/profile_setting_update_image/{id}',[OwnerprofilesettinController::class,'update_image']);
 
-    
+
 
 
 
