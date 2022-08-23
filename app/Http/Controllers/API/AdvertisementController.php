@@ -59,7 +59,7 @@ class AdvertisementController extends Controller
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
             'address' => 'required|string',
-            'image_name' => 'required|array|nullable|max:3',
+            'image_name' => 'required|array|nullable|max:10',
         'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
 
             "city_id" => "required"
