@@ -59,7 +59,7 @@ class AdvertisementController extends Controller
             'area'=>['required','numeric','regex:/^([1-9][0-9]{0,2}|1000)$/'],
             'furniture'=>"required",
             'address' => 'required|string',
-            'image_name' => 'required|array|nullable',
+            'image_name' => 'required|array|nullable|max:3',
         'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
 
             "city_id" => "required"
@@ -95,7 +95,9 @@ class AdvertisementController extends Controller
             "city_id.required" => "برجاء ادخال اسم المدينه او المحافظه الحاصه بالاعلان",
             "image_name.required" => "بجب ان تدخل صوره الاعلان هذا الحقل مطلوب ",
             "image_name.array" => "يجب ان تكن مصفوفه صور او عدة صور للاعلان المطلوب ",
-            "image_name.mime" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif"
+            "image_name.mime" => "يجب اتكونالصوره من نوع jpg او jpegاو pngاو svgاو gif",
+            "image_name.max"=>"اقصى حد للصور المرفوعه هو 10 صور-"
+
 
 
 
@@ -148,7 +150,7 @@ class AdvertisementController extends Controller
     //start notification data
     $add_advertisement_data=[
         "advertisement" => $advertisement,
-        "message"=>" تم اضافة اعلان من قبل المالك " . Auth::user()->name ."في انتظار موافقتك",
+        "message"=>" ". " تم اضافة اعلان من قبل المالك " ." ". Auth::user()->name ." "."في انتظار موافقتك",
         "time" => carbon::now()
     ];
     event(new AddAdvertisement($add_advertisement_data));
