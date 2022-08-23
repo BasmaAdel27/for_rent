@@ -200,7 +200,9 @@ class OwnerprofilesettinController extends Controller
                 'name' => $request->name,
                 'phone'=>$request->phone,
             ]);
-            return response()->json(["success"=> $update_user, "message" => "تم تحديث الاسم و رقم التليفون بنجاح"]);
+            $user->name = $request->name;
+            $user->save();
+            return response()->json(["success"=> $update_user,"name"=> $user->name, "message" => "تم تحديث الاسم و رقم التليفون بنجاح"]);
 
 
 
