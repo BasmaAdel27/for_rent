@@ -16,10 +16,10 @@ class ResetPasswordController extends Controller
     {
     }
     public function getResetToken(Request $request){
+        $user = User::where('email', $request->email)->first();
 
             if(!$request->email)
                 return response()->json(['message'=> 'برجاء ادخال البريد الالكتروني'], 400);
-            $user = User::where('email', $request->email)->first();
             if (!$user)
                 return response()->json(['message'=> 'هذا البريد الالكتروني غير موجود'], 400);
             $token = PasswordReset::where('email', $request->email)->first();
@@ -50,7 +50,7 @@ class ResetPasswordController extends Controller
         Mail::send('email.reset', $data, function($mail) use ($user){
                 $mail->from('hello@example.com', "From for rent");
                 $mail->to($user->email);
-                $mail->subject('Reset password for your account');
+                $mail->subject('اعادة تعيين كلمه المرور الخاصه بك');
             });
             return response()->json(['message' => 'تم ارسال الرمز برجاء التحقق من بريدك الالكتروني.']);
 

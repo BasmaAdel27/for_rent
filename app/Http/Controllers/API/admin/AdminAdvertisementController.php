@@ -27,7 +27,7 @@ class AdminAdvertisementController extends Controller
     public function acceptedRequest(){
         $advertisements=Advertisement::where('control','accepted')->with('user')->get();
         if($advertisements->isEmpty()) {
-            return response()->json(['message'=>'لا يوجد اعلانات تمت الموافقه عليها','counts'=>count($advertisements)]);
+            return response()->json(['message'=>'لا يوجد اعلانات تمت الموافقه عليها','count'=>count($advertisements)]);
         }else{
             return response()->json(['accepted_advertisement' => $advertisements,'count'=>count($advertisements)]);
 
@@ -37,7 +37,7 @@ class AdminAdvertisementController extends Controller
     public function declinedRequest(){
         $advertisements=Advertisement::where('control','declined')->with('user')->get();
         if($advertisements->isEmpty()) {
-            return response()->json(['message'=>'لا يوجد اعلانات ملغيه','counts'=>count($advertisements)]);
+            return response()->json(['message'=>'لا يوجد اعلانات ملغيه','count'=>count($advertisements)]);
         }else{
             return response()->json(['deslined_advertisement' => $advertisements,'count'=>count($advertisements)]);
 
