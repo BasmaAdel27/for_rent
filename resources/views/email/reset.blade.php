@@ -1,7 +1,5 @@
-<h3>Welcome <bold> {{$name}} </bold></h3>
+<h3> مرحبا <bold> {{$name}} </bold></h3>
 <br>
-<h2>This is Your Code to reset your password</h2>
-<br>
+<h2>هذا هو الرمز الخاص بك لإعادة تعيين كلمة المرور الخاصة بك</h2>
 <h2 style="color: red">{{$token}}</h2>
-<br>
-<h3><bold>Thank you.</bold></h3>
+<h3><bold>شكرا لك </bold></h3>

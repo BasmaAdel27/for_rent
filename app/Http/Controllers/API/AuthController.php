@@ -84,7 +84,8 @@ class AuthController extends Controller
                 'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
                 'gender'=>'required',
                 'password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
-            ], [
+                'payment'=>'required'
+                ], [
                 'name.required' => 'برجاء ادخال اسم المستخدم',
                 'name.string' => 'لابد ان يكون اسم المستخدم بالحروف',
                 'email.required' => 'برجاء ادخال البريد الإلكتروني ',
@@ -101,7 +102,8 @@ class AuthController extends Controller
                 'phone.regex'=>'لابد ان يبدا هاتفك ب 015,012,011,010',
                 'image.required'=>'هذا الحقل مطلوب ادخاله',
                 'image.mime'=>'صيغه الصوره غير مدعومه',
-                'gender.required'=>'هذا الحقل مطلوب ادخاله'
+                'gender.required'=>'هذا الحقل مطلوب ادخاله',
+                'payment.required'=>'هذا الحقل مطلوب ادخاله',
             ]);
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
@@ -124,6 +126,7 @@ class AuthController extends Controller
             'phone' =>$request->phone,
             'gender' =>$request->gender,
             'image'=>$imageURL,
+            'payment'=>$request->payment,
             'password' => Hash::make($request->password),
         ]);
 
@@ -139,7 +142,7 @@ class AuthController extends Controller
             //mail verification
         $verification_code =random_int(100000, 999999);//Generate verification code
         DB::table('user_verifications')->insert(['user_id'=>$user->id,'token'=>$verification_code]);
-        $subject = "Please verify your email address.";
+        $subject = "تحقق من عنوان بريدك الإلكتروني";
         Mail::send('email.verify', ['name' => $name, 'verification_code' => $verification_code],
             function($mail) use ($email, $name, $subject){
                 $mail->from('hello@example.com', "From for rent");

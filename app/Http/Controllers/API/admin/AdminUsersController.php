@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AdminUsersController extends Controller
@@ -62,13 +63,32 @@ class AdminUsersController extends Controller
     public function block(User $userId){
 
         $user=User::where('id',$userId->id)->first();
+        $name=$user->name;
+        $status=$user->status;
+
         if ($user->status == 'is_active') {
             $user->status = 'is_blocked';
             $user->save();
+            $data = [
+                'name' => $name,
+                'status'=>$status,
+            ];
+            Mail::send('email.block', $data, function($mail) use ($user){
+                $mail->from('hello@example.com', "From for rent");
+                $mail->to($user->email);
+            });
             return response()->json(['message' => 'تم حظر المستخدم بنجاح','user'=>$user]);
         }else{
             $user->status = 'is_active';
             $user->save();
+            $data = [
+                'name' => $name,
+                'status'=>$status,
+            ];
+            Mail::send('email.block', $data, function($mail) use ($user){
+                $mail->from('hello@example.com', "From for rent");
+                $mail->to($user->email);
+            });
             return response()->json(['message' => 'تم فك حظر المستخدم بنجاح','user'=>$user]);
         }
     }
