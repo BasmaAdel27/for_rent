@@ -13,9 +13,9 @@ use Illuminate\Queue\SerializesModels;
 class AddAdvertisement implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-  public $advertisement;
-  public $message;
-  public $time;
+    public $advertisement;
+    public $message;
+    public $time;
     /**
      * Create a new event instance.
      *
@@ -26,9 +26,9 @@ class AddAdvertisement implements ShouldBroadcast
         $this-> advertisement = $add_advertisement_data["advertisement"];
         $this->message =$add_advertisement_data["message"];
         $this->time=$add_advertisement_data["time"];
-        
-        
-        
+
+
+
     }
 
     /**
@@ -40,12 +40,12 @@ class AddAdvertisement implements ShouldBroadcast
 
     {
         return ['NewChannel3'];
-        
+
     }
 
     public function broadcastAs()
-  {
-    return "AddAdvertisement";
+    {
+        return "AddAdvertisement";
 
-  }
+    }
 }

@@ -49,4 +49,4 @@ class ConfirmOwnerRequestFromAdmin implements ShouldBroadcast
   }
 
 }
- 
+
