@@ -199,7 +199,6 @@ class OwnerprofilesettinController extends Controller
             $update_user=$user->update([
                 'name' => $request->name,
                 'phone'=>$request->phone,
-                "payment"=>$request->payment
             ]);
             if ($user->type == 'renter' || $user->type == 'admin' || $user->type == 'superAdmin'){
                 $user->payment='no';
