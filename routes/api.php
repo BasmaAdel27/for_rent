@@ -73,6 +73,8 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::get('/allRented/paymentmethod',[PaymentController::class,'paymentAdmin']);
     Route::get('/edit/team/{id}',[AdminTeamController::class,'edit']);
     Route::post('/update/image/{id}',[AdminTeamController::class,'updateImage']);
+    Route::post('/update/follow/image/{id}',[AdminFollowUsController::class,'updateImage']);
+    Route::post('/update/about/image/{id}',[AdminAboutController::class,'updateImage']);
     Route::get('/edit/about/{id}',[AdminAboutController::class,'edit']);
     Route::get('/edit/followUs/{id}',[AdminFollowUsController::class,'edit']);
 

@@ -92,6 +92,26 @@ class AdminAboutController extends Controller
         return response()->json(['data'=>$about]);
     }
 
+    public function updateImage(Request $request,$id){
+        $validator=Validator::make($request->all(),[
+
+            'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+        ],[
+
+            'image.mime'=>'صيغه الصوره غير مدعومه',
+            'image.image'=>'هذا الحقل لابد ان يكون صوره'
+        ]);
+        if ($validator->fails()){
+            return response()->json(['error'=>$validator->errors()],401);
+        }
+        $image=About::find($id);
+        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
+        $image->image=$imageURL;
+        $image->save();
+        return response()->json(['success'=>true,'message'=>'تم التعديل بنجاح','image'=>$image]);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -105,14 +125,12 @@ class AdminAboutController extends Controller
         $validator=Validator::make($request->all(),[
             'title'=>'required|string',
             'description'=>'required|string',
-            'image'=>'required|image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
         ],[
             'title.required'=>'هذا الحقل مطلوب ادخاله',
             'title.string'=>'برجاء ادخال العنوان بالحروف',
             'description.required'=>'هذا الحقل مطلوب ادخاله',
             'description.string'=>'برجاء ادخال الوصف بالحروف',
-            'image.required'=>'هذا الحقل مطلوب ادخاله',
-            'image.mime'=>'صيغه الصوره غير مدعومه',
+
 
         ]);
 
@@ -120,16 +138,12 @@ class AdminAboutController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         $about=About::find($about_id);
-//        $photo=$request->file('image');
-//        dd($request->all());
-
-        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+//
 
 
         $about->update([
             'title'=>$request->title,
             'description'=>$request->description,
-            'image'=>$imageURL
         ]);
 
         return response()->json(['message'=>'تم التعديل بنجاح','data'=>$about]);
