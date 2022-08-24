@@ -27,7 +27,7 @@ class OwnerprofilesettinController extends Controller
   return response()->json($user_info);
     }
 
-    
+
 
     /**
      * Store a newly created resource in storage.
@@ -74,11 +74,11 @@ class OwnerprofilesettinController extends Controller
         $validator =Validator::make($request->except('password', 'new_password'), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
-           
+
             'phone'=>'required|min:11|numeric|regex:/^01[0125][0-9]{8}$/',
             'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
             'gender'=>'required',
-           
+
 
 
         ],[
@@ -97,20 +97,20 @@ class OwnerprofilesettinController extends Controller
             'gender.required'=>'هذا الحقل مطلوب ادخاله',
 
             'password.required' => 'برجاء ادخال كلمه المرور',
-            
+
         ]);
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
-       
-     
+
+
      $filename = Auth::user()->image;
-     
-     $user= Auth::user(); 
+
+     $user= Auth::user();
      $message ="لم يتم تحديث كلمة المرور";
      if($request->new_password){
 
-        //validation 
+        //validation
         $validator =Validator::make($request->only('password', 'new_password'), [
              'password' => 'required',
 
@@ -122,33 +122,33 @@ class OwnerprofilesettinController extends Controller
     ]);
 
 
-     if (Auth::attempt(['password' => $request->password , "email" => $user->email]) && $request->new_password) { 
+     if (Auth::attempt(['password' => $request->password , "email" => $user->email]) && $request->new_password) {
         $user->fill([
          'password' => Hash::make($request->new_password)
          ])->save();
          $message =" تم تحديث كلمة المرور بنجاح";
-       
-            
+
+
         }elseif( Hash::check($request->new_password, $user->password)){
             $message = "كلمة المرور التي ادخلتها هي كلمة المرور القديمه الخاصه بك من فضلك ادخل كلمة مرور جديده ";
 
         }
         else{
-           
+
                 $message =" تم حفظ كلمة المرور القديمه  كلمة المرور التي ادخلتها لا تطابق كلمة المرور الخاصه بك ";
         }
     }
 
         if($request->file('image')){
-            
+
             $destinationPath = public_path('images/owner_profile_images');
                 $Extension = $request->file('image')->getClientOriginalExtension();
                 $filename=mt_rand(100000000,99999999999999). "." . $Extension;
                 $request->file('image')->move($destinationPath, $filename);
-               
+
         }
 
-      
+
        $update_user=$user->update([
         'name' => $request->name,
         'email' => $request->email,
@@ -158,11 +158,11 @@ class OwnerprofilesettinController extends Controller
         'status'=> 'is_active',
         'type'=>'owner'
 
-        
-       
+
+
        ]);
        $message2 ="تم تحديث بياناتك بنجاح";
-       
+
        return response()->json(["message"=>$update_user ,"password"=> $message, "yourdata"=>$message2]);
     }
 
@@ -176,12 +176,12 @@ class OwnerprofilesettinController extends Controller
     {
         //
     }
-    // update number and name 
+    // update number and name
     public function name_phone_setting(Request $request){
         $validator =Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'phone'=>'required|min:11|numeric|regex:/^01[0125][0-9]{8}$/',
-           
+
 
 
         ],[
@@ -195,28 +195,33 @@ class OwnerprofilesettinController extends Controller
                 return response()->json(['error'=>$validator->errors()], 401);
             }
 
-            $user= Auth::user(); 
+            $user= Auth::user();
             $update_user=$user->update([
                 'name' => $request->name,
                 'phone'=>$request->phone,
                 "payment"=>$request->payment
             ]);
-            $user->name = $request->name;
-            $user->payment = $request->payment;
-            $user->phone = $request->phone;
-            $user->save();
-            return response()->json(["success"=> $update_user,"name"=> $user->name,"payment"=>$user->payment,"phone"=>$user->phone, "message" => "تم تحديث الاسم و رقم التليفون بنجاح"]);
+            if ($user->type == 'renter' || $user->type == 'admin' || $user->type == 'superAdmin'){
+                $user->payment='no';
+                $user->save();
+                return response()->json(["success"=> $update_user,"name"=> $user->name,"payment"=>$user->payment,"phone"=>$user->phone, "message" => "تم تحديث الاسم و رقم التليفون بنجاح"]);
+            }else {
+                $user->payment = $request->payment;
+                $user->save();
+                return response()->json(["success"=> $update_user,"name"=> $user->name,"payment"=>$user->payment,"phone"=>$user->phone, "message" => "تم تحديث الاسم و رقم التليفون بنجاح"]);
+
+            }
 
 
 
 
 
 
-    } 
+    }
 
-    //update password 
+    //update password
     public function update_password(Request $request){
-        $user= Auth::user(); 
+        $user= Auth::user();
 
         $validator =Validator::make($request->all(), [
             'old_password' => 'required',
@@ -224,7 +229,7 @@ class OwnerprofilesettinController extends Controller
 
        ],['new_password.required' => 'برجاء ادخال كلمه المرور',
        'new_password.min' => 'لابد ان تكون كلمه المرور اكثر من 8',
-       
+
        'new_password.regex'=>'يجب أن تتكون كلمة المرور الخاصة بك من أكثر من 8 أحرف ، ويجب أن تحتوي على الأقل على حرف كبير واحد ، وحرف صغير واحد ، ورقم واحد ، وحرف خاص واحد',
        'new_password.confirmed' => ' برجاء تأكيد كلمه المرور التي تم ادخالها',
 
@@ -234,27 +239,27 @@ class OwnerprofilesettinController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
             }
 
-            if (Auth::attempt(['password' => $request->old_password , "email" => $user->email]) && !(Hash::check($request->new_password, $user->password))) { 
+            if (Auth::attempt(['password' => $request->old_password , "email" => $user->email]) && !(Hash::check($request->new_password, $user->password))) {
                 $user->fill([
                  'password' => Hash::make($request->new_password)
                  ])->save();
                  $message =" تم تحديث كلمة المرور بنجاح";
-               
-                    
+
+
                 }elseif( Hash::check($request->new_password, $user->password)&& Auth::attempt(['password' => $request->old_password , "email" => $user->email])){
                     $message = "كلمة المرور التي ادخلتها هي كلمة المرور القديمه الخاصه بك من فضلك ادخل كلمة مرور جديده ";
-        
+
                 }
                 else{
-                   
+
                         $message =" تم حفظ كلمة المرور القديمه  كلمة المرور التي ادخلتها لا تطابق كلمة المرور الخاصه بك ";
                 }
-              
+
                 return response()->json(["message"=>$message ]);
 
 
     }
-     //update image 
+     //update image
      function update_image(Request $request, $id){
         $validator =Validator::make($request->all(), [
             'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
@@ -265,15 +270,15 @@ class OwnerprofilesettinController extends Controller
 
                 if ($validator->fails()) {
                     return response()->json(['error'=>$validator->errors()], 401);
-                    }  
+                    }
                     $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
 
                     $user= User::find($id);
-            
+
                     $user->image=$imageURL;
                     $user->save();
                     return response()->json(['success'=>true,'message'=>'تم التعديل بنجاح','image'=>$user->image]);
-                }     
-     }  
-   
+                }
+     }
+
 
