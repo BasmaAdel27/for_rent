@@ -155,7 +155,9 @@ class AdvertisementController extends Controller
     ];
     event(new AddAdvertisement($add_advertisement_data));
     //store in table notification
-    $admins = User::where("type","admin")->get();
+    $super_admins = User::where([["type","superAdmin"]])->get();
+    $admins = User::where([["type","admin"]])->get();
+
     foreach($admins as $admin){
     $notification = New Notification ;
     $notification->user_id = $admin->id;    //ADMIN ID
@@ -165,8 +167,17 @@ class AdvertisementController extends Controller
     $notification->sent_at =$add_advertisement_data["time"];
     $notification->save();
     }
+    foreach($super_admins as $admin){
+        $notification = New Notification ;
+        $notification->user_id = $admin->id;    //ADMIN ID
+        $notification->advertisement_id = $advertisement->id;
+        $notification->content = $add_advertisement_data["message"];
+        $notification->status = "not_red";
+        $notification->sent_at =$add_advertisement_data["time"];
+        $notification->save();
+        }
 
-    return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image ] );
+    return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image , "admins" => $admins ,"super_admins"=>$super_admins] );
 
     }
 
