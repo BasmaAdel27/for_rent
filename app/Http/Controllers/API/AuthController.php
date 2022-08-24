@@ -75,6 +75,7 @@ class AuthController extends Controller
 //
     public function register(Request $request){
             //validation
+        if($request->type == 'owner'){
         $validator =Validator::make($request->all(),
             [
                 'name' => 'required|string|max:255',
@@ -104,7 +105,36 @@ class AuthController extends Controller
                 'image.mime'=>'صيغه الصوره غير مدعومه',
                 'gender.required'=>'هذا الحقل مطلوب ادخاله',
                 'payment.required'=>'هذا الحقل مطلوب ادخاله',
-            ]);
+            ]);}else{
+            $validator =Validator::make($request->all(),
+                [
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|string|email|max:255|unique:users',
+                    'type'=>'required',
+                    'phone'=>'required|min:11|numeric|unique:users|regex:/^01[0125][0-9]{8}$/',
+                    'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+                    'gender'=>'required',
+                    'password' => 'required|string|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
+                ], [
+                    'name.required' => 'برجاء ادخال اسم المستخدم',
+                    'name.string' => 'لابد ان يكون اسم المستخدم بالحروف',
+                    'email.required' => 'برجاء ادخال البريد الإلكتروني ',
+                    'email.email' => 'صيغة البريد الإلكتروني غير صحيحة',
+                    'email.unique' => 'البريد الإلكتروني مسجل بالفعل',
+                    'type.required'=>'هذا الحقل مطلوب ادخاله',
+                    'password.required' => 'برجاء ادخال كلمه المرور',
+                    'password.min' => 'لابد ان تكون كلمه المرور اكثر من 8',
+                    'password.regex'=>'يجب أن تتكون كلمة المرور الخاصة بك من أكثر من 8 أحرف ، ويجب أن تحتوي على الأقل على حرف كبير واحد ، وحرف صغير واحد ، ورقم واحد ، ورمزا واحد',
+                    'password.confirmed' => ' برجاء تأكيد كلمه المرور التي تم ادخالها',
+                    'phone.min' => 'رقم الهاتف لابد ان يكون مكون من 11 رقم ',
+                    'phone.required' => 'برجاء ادخال رقم الهاتف الخاص بك',
+                    'phone.unique'=>'رقم الهاتف مسجل بالفعل',
+                    'phone.regex'=>'لابد ان يبدا هاتفك ب 015,012,011,010',
+                    'image.required'=>'هذا الحقل مطلوب ادخاله',
+                    'image.mime'=>'صيغه الصوره غير مدعومه',
+                    'gender.required'=>'هذا الحقل مطلوب ادخاله',
+                ]);
+        }
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
@@ -119,17 +149,29 @@ class AuthController extends Controller
         $email=$request->email;
 
             // store user in database
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'type' =>$request->type,
-            'phone' =>$request->phone,
-            'gender' =>$request->gender,
-            'image'=>$imageURL,
-            'payment'=>$request->payment,
-            'password' => Hash::make($request->password),
-        ]);
-
+        if($request->type == 'owner'){
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'type' => $request->type,
+                'phone' => $request->phone,
+                'gender' => $request->gender,
+                'image' => $imageURL,
+                'payment' => $request->payment,
+                'password' => Hash::make($request->password),
+            ]);
+        }else{
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'type' => $request->type,
+                'phone' => $request->phone,
+                'gender' => $request->gender,
+                'image' => $imageURL,
+                'payment' => 'no',
+                'password' => Hash::make($request->password),
+            ]);
+        }
         if ($user->image==null && $user->gender== 'female'){
             $user->image='https://bootstrapious.com/i/snippets/sn-about/avatar-4.png';
             $user->save();

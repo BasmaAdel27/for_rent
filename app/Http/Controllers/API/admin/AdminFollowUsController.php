@@ -60,7 +60,28 @@ class AdminFollowUsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $links=Follow_us::find($id);
+        return response()->json(['data'=>$links]);
+    }
+
+    public function updateImage(Request $request,$id){
+        $validator=Validator::make($request->all(),[
+
+            'logo'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+        ],[
+
+            'logo.mime'=>'صيغه الصوره غير مدعومه',
+            'logo.image'=>'هذا الحقل لابد ان يكون صوره'
+        ]);
+        if ($validator->fails()){
+            return response()->json(['error'=>$validator->errors()],401);
+        }
+        $image=Follow_us::find($id);
+        $imageURL = cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
+
+        $image->logo=$imageURL;
+        $image->save();
+        return response()->json(['success'=>true,'message'=>'تم التعديل بنجاح','logo'=>$image]);
     }
 
     /**
@@ -78,13 +99,10 @@ class AdminFollowUsController extends Controller
             'facebook'=>'nullable|string',
             'twitter'=>'nullable|string',
             'email'=>'nullable|string|email',
-            'logo'=>'required|image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
             'phone'=>'nullable|min:11|numeric|regex:/^01[0125][0-9]{8}$/',
         ],[
             'email.email'=>'صيغه البريد الالكتروني غير صحيحه',
-            'logo.required'=>'هذا الحقل مطلوب ادخاله',
-            'logo.image'=>'هذا الحقل يجب ان يكون صوره',
-            'logo.mime'=>'صيغه الصوره غير مدعومه',
+
             'phone.min' => 'رقم الهاتف لابد ان يكون مكون من 11 رقم ',
             'phone.required' => 'برجاء ادخال رقم الهاتف الخاص بك',
             'phone.regex'=>'لابد ان يبدا هاتفك ب 015,012,011,010',
@@ -93,7 +111,6 @@ class AdminFollowUsController extends Controller
             return response()->json(['error'=>$validator->errors()],401);
         }
 
-        $imageURL = cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
 
 
         $followUs=Follow_us::find($id);
@@ -103,7 +120,6 @@ class AdminFollowUsController extends Controller
             'twitter'=>$request->twitter,
             'email'=>$request->email,
             'phone'=>$request->phone,
-            'logo'=>$imageURL,
         ]);
 
         return response()->json(['message'=>'تم التعديل بنجاح','data'=>$followUs]);

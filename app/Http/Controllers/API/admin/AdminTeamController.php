@@ -86,7 +86,8 @@ class AdminTeamController extends Controller
      */
     public function edit($id)
     {
-
+      $team=Team::find($id);
+      return response()->json(['data'=>$team]);
     }
 
     /**
@@ -101,25 +102,24 @@ class AdminTeamController extends Controller
         $validator=Validator::make($request->all(),[
             'name'=>'required|string',
             'jobTitle'=>'required|string',
-            'image'=>'required|image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+//            'image'=>'required|image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
         ],[
             'name.required'=>'هذا الحقل مطلوب ادخاله',
             'jobTitle.required'=>'هذا الحقل مطلوب ادخاله',
-            'image.required'=>'هذا الحقل مطلوب ادخاله',
-            'image.mime'=>'صيغه الصوره غير مدعومه',
-            'image.image'=>'هذا الحقل لابد ان يكون صوره'
+//            'image.required'=>'هذا الحقل مطلوب ادخاله',
+//            'image.mime'=>'صيغه الصوره غير مدعومه',
+//            'image.image'=>'هذا الحقل لابد ان يكون صوره'
         ]);
 
         if ($validator->fails()){
             return response()->json(['error'=>$validator->errors()],401);
         }
-        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+//        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
 
         $team=Team::find($team_id);
         $team->update([
             'name'=>$request->name,
             'jobTitle'=>$request->jobTitle,
-            'image'=>$imageURL
         ]);
         return response()->json([
             'success'=>true,
@@ -129,6 +129,25 @@ class AdminTeamController extends Controller
 
     }
 
+    public function updateImage(Request $request,$id){
+        $validator=Validator::make($request->all(),[
+
+            'image'=>'image|mimes:jpeg,png,jpg,gif,PNG,JPG,JPEG,svg|max:2048',
+        ],[
+
+            'image.mime'=>'صيغه الصوره غير مدعومه',
+            'image.image'=>'هذا الحقل لابد ان يكون صوره'
+        ]);
+        if ($validator->fails()){
+            return response()->json(['error'=>$validator->errors()],401);
+        }
+        $image=Team::find($id);
+        $imageURL = cloudinary()->upload($request->file('image')->getRealPath())->getSecurePath();
+
+        $image->image=$imageURL;
+        $image->save();
+        return response()->json(['success'=>true,'message'=>'تم التعديل بنجاح','image'=>$image]);
+    }
     /**
      * Remove the specified resource from storage.
      *
