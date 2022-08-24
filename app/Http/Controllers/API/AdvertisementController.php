@@ -235,7 +235,7 @@ class AdvertisementController extends Controller
      */
     public function show(Advertisement $advertisement_id)
     {
-        $advertisement=Advertisement::where([['id',$advertisement_id->id],['status','not rented'],['control','accepted']])
+        $advertisement=Advertisement::where([['id',$advertisement_id->id],['control','accepted']])
             ->with('advertisement_image','user')->get();
         $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
         $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();

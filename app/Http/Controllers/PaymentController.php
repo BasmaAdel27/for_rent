@@ -80,23 +80,23 @@ class PaymentController extends Controller
 
     public function ownerPayment(){
         $data=Paymentmethod::where('owner_id',Auth::user()->id)->with('advertisement.advertisement_image','user','owner')->get();
-//        if($data->isEmpty()) {
-//            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
-//
-//        }else{
+        if($data->isEmpty()) {
+            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
+
+        }else{
             return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
 
-//        }
+        }
     }
 
     public function paymentAdmin(){
         $data=Paymentmethod::with('advertisement.advertisement_image','user','owner')->get();
-//        if($data->isEmpty()) {
-//            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
-//        }else{
+        if($data->isEmpty()) {
+            return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
+        }else{
             return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
 
-//        }
+        }
 
     }
 
