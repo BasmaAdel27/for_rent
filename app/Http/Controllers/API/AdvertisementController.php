@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Favourit;
 use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -246,13 +247,33 @@ class AdvertisementController extends Controller
      */
     public function show(Advertisement $advertisement_id)
     {
-        $advertisement=Advertisement::where([['id',$advertisement_id->id],['control','accepted']])
-            ->with('advertisement_image','user')->get();
-        $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
-        $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
-        $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)->withAvg('ratings','count')->withCount('ratings')
-            ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->with('advertisement_image')->get();
-        return response()->json(['advertisement'=>$advertisement,'reviews'=>$rating,'reviews_num'=>count($rating),'reviews_avg'=>$rating->avg('count'),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
+        if (Auth::user()) {
+            $advertisement = Advertisement::where([['id', $advertisement_id->id], ['control', 'accepted']])
+                ->with('advertisement_image', 'user')->first();
+            $favourite=Favourit::where([['user_id',Auth::user()->id],['advertisement_id',$advertisement->id]])->first();
+           if($favourite) {
+               $rating = Rating::where('advertisement_id', $advertisement_id->id)->with('user')->get();
+               $advs_owner = Advertisement::where([['status', 'not rented'], ['control', 'accepted'], ['user_id', $advertisement_id->user_id]])->get();
+               $adv_suggestion = Advertisement::where('id', '<>', $advertisement_id->id)->withAvg('ratings', 'count')->withCount('ratings')
+                   ->where([['city_id', $advertisement_id->city_id], ['status', 'not rented'], ['control', 'accepted'], ['type', $advertisement_id->type]])->with('advertisement_image')->get();
+               return response()->json(['favourite' => true, 'favourite_auth' => $favourite, 'advertisement' => $advertisement, 'reviews' => $rating, 'reviews_num' => count($rating), 'reviews_avg' => $rating->avg('count'), 'advertisement_num' => count($advs_owner), 'suggestion' => $adv_suggestion]);
+           }else{
+               $rating = Rating::where('advertisement_id', $advertisement_id->id)->with('user')->get();
+               $advs_owner = Advertisement::where([['status', 'not rented'], ['control', 'accepted'], ['user_id', $advertisement_id->user_id]])->get();
+               $adv_suggestion = Advertisement::where('id', '<>', $advertisement_id->id)->withAvg('ratings', 'count')->withCount('ratings')
+                   ->where([['city_id', $advertisement_id->city_id], ['status', 'not rented'], ['control', 'accepted'], ['type', $advertisement_id->type]])->with('advertisement_image')->get();
+               return response()->json(['favourite' => false, 'advertisement' => $advertisement, 'reviews' => $rating, 'reviews_num' => count($rating), 'reviews_avg' => $rating->avg('count'), 'advertisement_num' => count($advs_owner), 'suggestion' => $adv_suggestion]);
+
+           }
+        } else {
+            $advertisement = Advertisement::where([['id', $advertisement_id->id], ['control', 'accepted']])
+                ->with('advertisement_image', 'user')->get();
+            $rating = Rating::where('advertisement_id', $advertisement_id->id)->with('user')->get();
+            $advs_owner = Advertisement::where([['status', 'not rented'], ['control', 'accepted'], ['user_id', $advertisement_id->user_id]])->get();
+            $adv_suggestion = Advertisement::where('id', '<>', $advertisement_id->id)->withAvg('ratings', 'count')->withCount('ratings')
+                ->where([['city_id', $advertisement_id->city_id], ['status', 'not rented'], ['control', 'accepted'], ['type', $advertisement_id->type]])->with('advertisement_image')->get();
+            return response()->json(['advertisement' => $advertisement, 'reviews' => $rating, 'reviews_num' => count($rating), 'reviews_avg' => $rating->avg('count'), 'advertisement_num' => count($advs_owner), 'suggestion' => $adv_suggestion]);
+        }
     }
 
     public function editAdvertisement($adver_id){
