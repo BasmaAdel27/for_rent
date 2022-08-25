@@ -141,6 +141,7 @@ class AdminUsersController extends Controller
             'password' => Hash::make($request->password)
         ]);
         $admin->email_verified_at=Carbon::now();
+        $admin->payment='no';
         $admin->save();
 
         if ($admin->image==null && $admin->gender== 'female'){

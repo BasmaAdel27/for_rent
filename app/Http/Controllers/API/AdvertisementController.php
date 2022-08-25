@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Favourit;
 use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -60,7 +61,7 @@ class AdvertisementController extends Controller
             'furniture'=>"required",
             'address' => 'required|string',
             'image_name' => 'required|array|nullable|max:10',
-        'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
+            'image_name.*' => 'image|mimes:jpeg,png,jpg,gif,svg',
 
             "city_id" => "required"
         ],[
@@ -106,78 +107,78 @@ class AdvertisementController extends Controller
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
-    //store in databasee
-    $user = Auth::user();
+        //store in databasee
+        $user = Auth::user();
 
-    $advertisement = $user->advertisement()->create([
-       "title" =>$request->title,
-        "description" => $request->description,
-       "bedroom_num" => $request->bedroom_num,
-        "bathroom_num" => $request->bathroom_num,
-        "beds_num"=> $request->beds_num,
-        "status"=>"not rented",
-        "control"=>"pending",
-        "level" => $request->level,
-        "furniture "=> $request->furniture,
-        "type" => $request->type,
-        "area"=> $request->area,
-        "address" => $request->address,
-        "price"=>$request->price,
-        "city_id" => $request->city_id
-    ]);
+        $advertisement = $user->advertisement()->create([
+            "title" =>$request->title,
+            "description" => $request->description,
+            "bedroom_num" => $request->bedroom_num,
+            "bathroom_num" => $request->bathroom_num,
+            "beds_num"=> $request->beds_num,
+            "status"=>"not rented",
+            "control"=>"pending",
+            "level" => $request->level,
+            "furniture "=> $request->furniture,
+            "type" => $request->type,
+            "area"=> $request->area,
+            "address" => $request->address,
+            "price"=>$request->price,
+            "city_id" => $request->city_id
+        ]);
 
-    //store image
-    if($request->hasFile('image_name'))
-    {
-        $ad_image = [];
-        foreach($request->file('image_name') as $image)
+        //store image
+        if($request->hasFile('image_name'))
         {
-            $imageURL = cloudinary()->upload($image->getRealPath())->getSecurePath();
+            $ad_image = [];
+            foreach($request->file('image_name') as $image)
+            {
+                $imageURL = cloudinary()->upload($image->getRealPath())->getSecurePath();
 
-            $ad_image []= Advertisement_image::create([
-                "image_name" =>  $imageURL,
-                "advertisement_id"=> $advertisement->id
-            ]);
+                $ad_image []= Advertisement_image::create([
+                    "image_name" =>  $imageURL,
+                    "advertisement_id"=> $advertisement->id
+                ]);
 
 
 
+            }
+
+
+            $advertisement->advertisement_image()->saveMany($ad_image);
+        }
+        //end store image
+        //start notification data
+        $add_advertisement_data=[
+            "advertisement" => $advertisement,
+            "message"=>" ". " تم اضافة اعلان من قبل المالك " ." ". Auth::user()->name ." "."في انتظار موافقتك",
+            "time" => carbon::now()
+        ];
+        event(new AddAdvertisement($add_advertisement_data));
+        //store in table notification
+        $super_admins = User::where([["type","superAdmin"]])->get();
+        $admins = User::where([["type","admin"]])->get();
+
+        foreach($admins as $admin){
+            $notification = New Notification ;
+            $notification->user_id = $admin->id;    //ADMIN ID
+            $notification->advertisement_id = $advertisement->id;
+            $notification->content = $add_advertisement_data["message"];
+            $notification->status = "not_red";
+            $notification->sent_at =$add_advertisement_data["time"];
+            $notification->save();
+        }
+        foreach($super_admins as $admin){
+            $notification = New Notification ;
+            $notification->user_id = $admin->id;    //ADMIN ID
+            $notification->advertisement_id = $advertisement->id;
+            $notification->content = $add_advertisement_data["message"];
+            $notification->status = "not_red";
+            $notification->sent_at =$add_advertisement_data["time"];
+            $notification->save();
         }
 
-
-        $advertisement->advertisement_image()->saveMany($ad_image);
-    }
-    //end store image
-    //start notification data
-    $add_advertisement_data=[
-        "advertisement" => $advertisement,
-        "message"=>" ". " تم اضافة اعلان من قبل المالك " ." ". Auth::user()->name ." "."في انتظار موافقتك",
-        "time" => carbon::now()
-    ];
-    event(new AddAdvertisement($add_advertisement_data));
-    //store in table notification
-    $super_admins = User::where([["type","superAdmin"]])->get();
-    $admins = User::where([["type","admin"]])->get();
-
-    foreach($admins as $admin){
-    $notification = New Notification ;
-    $notification->user_id = $admin->id;    //ADMIN ID
-    $notification->advertisement_id = $advertisement->id;
-    $notification->content = $add_advertisement_data["message"];
-    $notification->status = "not_red";
-    $notification->sent_at =$add_advertisement_data["time"];
-    $notification->save();
-    }
-    foreach($super_admins as $admin){
-        $notification = New Notification ;
-        $notification->user_id = $admin->id;    //ADMIN ID
-        $notification->advertisement_id = $advertisement->id;
-        $notification->content = $add_advertisement_data["message"];
-        $notification->status = "not_red";
-        $notification->sent_at =$add_advertisement_data["time"];
-        $notification->save();
-        }
-
-    return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image , "admins" => $admins ,"super_admins"=>$super_admins] );
+        return response()->json([ $advertisement ,"user"=>$user, "images" => $ad_image , "admins" => $admins ,"super_admins"=>$super_admins] );
 
     }
 
@@ -246,14 +247,15 @@ class AdvertisementController extends Controller
      */
     public function show(Advertisement $advertisement_id)
     {
-        $advertisement=Advertisement::where([['id',$advertisement_id->id],['control','accepted']])
-            ->with('advertisement_image','user')->get();
-        $rating=Rating::where('advertisement_id',$advertisement_id->id)->with('user')->get();
-        $advs_owner=Advertisement::where([['status','not rented'],['control','accepted'],['user_id',$advertisement_id->user_id]])->get();
-        $adv_suggestion=Advertisement::where('id','<>',$advertisement_id->id)->withAvg('ratings','count')->withCount('ratings')
-            ->where([['city_id',$advertisement_id->city_id],['status','not rented'],['control','accepted'],['type',$advertisement_id->type]])->with('advertisement_image')->get();
-        return response()->json(['advertisement'=>$advertisement,'reviews'=>$rating,'reviews_num'=>count($rating),'reviews_avg'=>$rating->avg('count'),'advertisement_num'=>count($advs_owner),'suggestion'=>$adv_suggestion]);
-    }
+            $advertisement = Advertisement::where([['id', $advertisement_id->id], ['control', 'accepted']])
+                ->with('advertisement_image', 'user')->get();
+            $rating = Rating::where('advertisement_id', $advertisement_id->id)->with('user')->get();
+            $advs_owner = Advertisement::where([['status', 'not rented'], ['control', 'accepted'], ['user_id', $advertisement_id->user_id]])->get();
+            $adv_suggestion = Advertisement::where('id', '<>', $advertisement_id->id)->withAvg('ratings', 'count')->withCount('ratings')
+                ->where([['city_id', $advertisement_id->city_id], ['status', 'not rented'], ['control', 'accepted'], ['type', $advertisement_id->type]])->with('advertisement_image')->get();
+            return response()->json(['favourite'=>false,'advertisement' => $advertisement, 'reviews' => $rating, 'reviews_num' => count($rating), 'reviews_avg' => $rating->avg('count'), 'advertisement_num' => count($advs_owner), 'suggestion' => $adv_suggestion]);
+        }
+
 
     public function editAdvertisement($adver_id){
         $advertisement=Advertisement::where([['id',$adver_id],['user_id',Auth::user()->id]])->with('advertisement_image','user')->get();
@@ -351,28 +353,30 @@ class AdvertisementController extends Controller
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
-    /////////////store in databasee////////////////////////////////
-    $user = Auth::user();
+        /////////////store in databasee////////////////////////////////
+        $user = Auth::user();
 
         $advertisement= Advertisement::find($id);
         $advertisement->update([
             "title" =>$request->title,
-        "description" => $request->description,
-       "bedroom_num" => $request->bedroom_num,
-        "bathroom_num" => $request->bathroom_num,
-        "beds_num"=> $request->beds_num,
-        "level" => $request->level,
-        "furniture"=> $request->furniture,
-        "type" => $request->type,
-        "area"=> $request->area,
-        "address" => $request->address,
-        "price"=>$request->price,
-        "city_id" =>$request->city_id
-    ]);
-    $advertisement->control="pending";
-    $advertisement->save();
-    //update image
-    $advertisement = Advertisement::find($id);
+            "description" => $request->description,
+            "bedroom_num" => $request->bedroom_num,
+            "bathroom_num" => $request->bathroom_num,
+            "beds_num"=> $request->beds_num,
+            "level" => $request->level,
+            "furniture"=> $request->furniture,
+            "type" => $request->type,
+            "area"=> $request->area,
+            "address" => $request->address,
+            "price"=>$request->price,
+            "city_id" =>$request->city_id,
+            "status"=>$request->status
+        ]);
+
+        $advertisement->control="pending";
+        $advertisement->save();
+        //update image
+        $advertisement = Advertisement::find($id);
 //    if( ($request->file('image_name'))){
 //        $advertisement->advertisement_image()->delete();
 //        $photos = $request->file('image_name');
@@ -396,9 +400,9 @@ class AdvertisementController extends Controller
 //    }
 //
 
-    //end update image
+        //end update image
         //update
-       return response()->json( ["advertisement" => $advertisement,"message"=>"تم التعديل بنجاح" , "user"=>Auth::user()]);
+        return response()->json( ["advertisement" => $advertisement,"message"=>"تم التعديل بنجاح" , "user"=>Auth::user()]);
     }
 
     /**
