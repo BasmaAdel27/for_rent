@@ -42,8 +42,8 @@ return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"pending"=
         $user = User::find($id);
 
 
-    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->with("advertisement_image")->get();
-    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']])->with("advertisement_image")->get();
+    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->with("advertisement_image")->withAvg("ratings", "count")->withCount('ratings')->get();
+    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']])->with("advertisement_image")->withAvg("ratings", "count")->withCount('ratings')->get();
  
     
 
