@@ -45,5 +45,8 @@ class Advertisement extends Model
     public function city(){
         return $this->belongsTo(City::class);
     }
+    public function payment(){
+    return $this->hasMany(Paymentmethod::class,'advertisement_id','id');
+    }
 
 }

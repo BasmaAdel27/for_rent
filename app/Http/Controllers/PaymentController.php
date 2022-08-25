@@ -68,12 +68,18 @@ class PaymentController extends Controller
 
 
     public function renterPayment(){
-        $data=Paymentmethod::where('user_id',Auth::user()->id)->with('advertisement.advertisement_image','user','owner')->get();
+        $data=Paymentmethod::where('user_id',Auth::user()->id)->with('user','owner')->get();
+
         if($data->isEmpty()) {
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
 
         }else{
-            return response()->json(['success'=>true,'data'=>$data,'count'=>count($data)]);
+            $advertisements=[];
+            foreach ($data as $value){
+                $advertisements[]=Advertisement::where('id',$value->advertisement_id)->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
+
+            }
+            return response()->json(["allAdvertisements" => $advertisements,'count'=>count($advertisements)]);
 
         }
     }
