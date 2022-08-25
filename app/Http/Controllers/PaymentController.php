@@ -68,7 +68,7 @@ class PaymentController extends Controller
 
 
     public function renterPayment(){
-        $data=Paymentmethod::where('user_id',Auth::user()->id)->with('advertisement.advertisement_image','user')->get();
+        $data=Paymentmethod::where('user_id',Auth::user()->id)->with('advertisement.advertisement_image','user','owner')->get();
         if($data->isEmpty()) {
             return response()->json(['message'=> 'لا توجد اعلانات مؤجره','count'=>count($data)]);
 
