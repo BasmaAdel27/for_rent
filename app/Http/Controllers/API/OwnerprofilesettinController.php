@@ -243,18 +243,18 @@ class OwnerprofilesettinController extends Controller
                  'password' => Hash::make($request->new_password)
                  ])->save();
                  $message =" تم تحديث كلمة المرور بنجاح";
-
+                 $sucess = "true";
 
                 }elseif( Hash::check($request->new_password, $user->password)&& Auth::attempt(['password' => $request->old_password , "email" => $user->email])){
                     $message = "كلمة المرور التي ادخلتها هي كلمة المرور القديمه الخاصه بك من فضلك ادخل كلمة مرور جديده ";
-
+                    $sucess = "false";
                 }
                 else{
 
                         $message =" تم حفظ كلمة المرور القديمه  كلمة المرور التي ادخلتها لا تطابق كلمة المرور الخاصه بك ";
-                }
+                }        $sucess = "flase";
 
-                return response()->json(["message"=>$message ]);
+                return response()->json(["message"=>$message , "success" => $sucess]);
 
 
     }
