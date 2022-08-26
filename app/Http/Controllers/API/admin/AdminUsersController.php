@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Advertisement;
+use App\Models\Paymentmethod;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -73,6 +75,10 @@ class AdminUsersController extends Controller
                 'name' => $name,
                 'status'=>$status,
             ];
+            if ($user->type == 'owner'){
+                $advers=Advertisement::where('user_id',$user->id)->forceDelete();
+
+            }
             Mail::send('email.block', $data, function($mail) use ($user){
                 $mail->from('hello@example.com', "From for rent");
                 $mail->to($user->email);

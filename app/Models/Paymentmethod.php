@@ -18,6 +18,6 @@ class Paymentmethod extends Model
         return $this->belongsTo(User::class,'user_id','id');
     }
     public function advertisement(){
-        return $this->hasMany(Advertisement::class,'advertisement_id','id');
+        return $this->belongsTo(Advertisement::class,'advertisement_id','id');
     }
 }
