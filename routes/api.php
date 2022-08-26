@@ -62,7 +62,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::post('/admin/follow_us/update/{id}',[AdminFollowUsController::class,'update']);
     Route::get('/admin/contactUs/show/{contactus_id}',[AdminContactusController::class,'show']);
     Route::get('/admin/contactUs/list',[AdminContactusController::class,'index']);
-    Route::get('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
+    Route::delete('/admin/contactUs/delete/{contactus_id}',[AdminContactusController::class,'destroy']);
 
 
 
