@@ -416,7 +416,11 @@ class AdvertisementController extends Controller
         $advertisement = Advertisement::find($id);
         if((Auth::user()->type)=="owner"&& (($advertisement->user_id) == (Auth::user()->id)) ){
             $advertisement->delete();
+
+           
+
             return response()->json("تم المسح بنجاح");
+
 
 
         }else{

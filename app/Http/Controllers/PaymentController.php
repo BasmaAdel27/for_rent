@@ -50,6 +50,7 @@ class PaymentController extends Controller
         if (Paymentmethod::where([['advertisement_id',$request->adver_id],['user_id',Auth::user()->id]])->exists()){
             $result=Paymentmethod::where([['advertisement_id',$request->adver_id],['user_id',Auth::user()->id]])->delete();
         }
+    
         $payment=Paymentmethod::create([
             'user_id'=>Auth::user()->id,
             'owner_id'=>$request->owner_id,
@@ -60,7 +61,20 @@ class PaymentController extends Controller
         $advertisement=Advertisement::where([['id',$payment->advertisement_id],['control','accepted'],['user_id',$payment->owner_id]])->first();
         $advertisement->status='rented';
         $advertisement->save();
+        
         //start payment notification
+        $user_id = Auth::user()->id;
+        $owner_id = $request->owner_id;
+        $user = User::find($user_id);
+        $renter_name = $user->name;
+        $payment_notf_data = [
+
+            "message" => "تم الدفع من خلال الموقع من المستاجر" . ': '. $renter_name . "  ". " للعقار : " . $advertisement->title ,
+            
+            "owner_id"=> $owner_id,
+           
+        ];
+        event(new PaymentNotification( $payment_notf_data ));
 
         return  response()->json(['success'=>true,'advertisement'=>$advertisement,'payment'=>$payment]);
     }

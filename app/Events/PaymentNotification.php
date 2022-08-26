@@ -9,8 +9,8 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
- 
-class rejectAdvertisement implements ShouldBroadcast
+
+class PaymentNotification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,14 +19,11 @@ class rejectAdvertisement implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($reject_advertisement_data)
+    public $message ; 
+    public $owner_id;
+    public function __construct( $payment_notf_data )
     {
-        $this-> advertisement = $reject_advertisement_data["advertisement"];
-        $this->message =$reject_advertisement_data["message"];
-        $this->time=$reject_advertisement_data["time"];
-
-
-
+        //
     }
 
     /**
@@ -35,16 +32,12 @@ class rejectAdvertisement implements ShouldBroadcast
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn()
-
     {
-        return ['NewChannel4'];
-
+        return new PrivateChannel('payment');
     }
-
     public function broadcastAs()
     {
-        return "RejectAdvertisement";
-
+      return "PaymentNotification";
+  
     }
 }
-
