@@ -69,6 +69,10 @@ class OwnerprofilesettinController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function editImage($id){
+        $image=User::where('id',$id)->first('image');
+        return response()->json(['image'=>$image]);
+    }
     public function update(Request $request)
     {
         $validator =Validator::make($request->except('password', 'new_password'), [

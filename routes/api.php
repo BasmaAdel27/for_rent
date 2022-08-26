@@ -153,6 +153,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
     Route::get('/get_notification', [GetNotificationController::class,'view']);
     Route::get('/profile_setting',[OwnerprofilesettinController::class,'index']);
+    Route::get('/edit/image/{id}',[OwnerprofilesettinController::class,'editImage']);
 
     Route::post('/profile_setting',[OwnerprofilesettinController::class,'update']);
     Route::post('/profile_setting_name_phone',[OwnerprofilesettinController::class,'name_phone_setting']);
