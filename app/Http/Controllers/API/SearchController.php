@@ -16,97 +16,165 @@ class SearchController extends Controller
 {
     public function search( Request $request){
 
-     if(Auth::user()){
-             
+        
+       
+        
         if((($request->city_id)&&($request->type)&&($request->bedroom_num)) ){
             $search_results = Advertisement::where([
                 ['city_id', '=', $request->city_id],
                 ['type', '=', $request->type],
                 ["bedroom_num","=",$request->bedroom_num],
                 ["status", "not rented"],["control", "accepted"]
-            ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+            return response()->json($search_results);
+
+
+        }elseif((($request->city_all == "all")&&($request->type)&&($request->bedroom_num)) ){
+            $search_results = Advertisement::where([
+               
+                ['type', '=', $request->type],
+                ["bedroom_num","=",$request->bedroom_num],
+                ["status", "not rented"],["control", "accepted"]
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
             return response()->json($search_results);
     
     
-            }elseif(($request->city_id)&&($request->type)){  
-    
-                $search_results =  Advertisement::where([
-                    ['city_id', '=', $request->city_id],
-                    ['type', '=', $request->type],
-                    ["status", "not rented"],["control", "accepted"]
-                    
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();  
-                  return response()->json($search_results);
-            }elseif(($request->city_id)&&($request->bedroom_num)){  
-    
-                $search_results =  Advertisement::where([
-                    ['city_id', '=', $request->city_id],
-                    ["bedroom_num","=",$request->bedroom_num],
-                    ["status", "not rented"],["control", "accepted"]
-                    
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get(); 
-                  return response()->json($search_results);
-            }elseif(($request->type)&&($request->bedroom_num)){  
-    
-                $search_results =  Advertisement::where([
-                    ['type', '=', $request->type],
-                    ["bedroom_num","=",$request->bedroom_num],
-                    ["status", "not rented"],["control", "accepted"]
-                    
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();  
-                  return response()->json($search_results);
-            }elseif(($request->type)){  
-    
+        }elseif(((($request->city_all) == "all")&&(($request->type_all)=="all")&&($request->bedroom_num)) ){
                 $search_results = Advertisement::where([
-                    ['type', '=', $request->type],
-                    ["status", "not rented"],["control", "accepted"]
-                  
-                    
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
-                  return response()->json($search_results);
-            }elseif(($request->bedroom_num)){  
-    
-                $search_results =  Advertisement::where([
-              
+                   
+                   
                     ["bedroom_num","=",$request->bedroom_num],
                     ["status", "not rented"],["control", "accepted"]
-                    
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();  
-                  return response()->json($search_results);
-            }elseif(($request->city_id)){  
-    
-                $search_results = Advertisement::where([
-                    ['city_id', '=', $request->city_id],
-                    ["status", "not rented"],["control", "accepted"]
-    
-                    
-                    
-                    
-                ])->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();   
-                  return response()->json($search_results);
-            }else{
-                $alladvertisement = Advertisement::where([["status", "not rented"],["control", "accepted"]])->get();
-            return response()->json(["advertisements"=>$alladvertisement]);
-            }
-
-
-
-
-
-        }else{
-       
+                ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+                return response()->json($search_results);
         
-        if((($request->city_id)&&($request->type)&&($request->bedroom_num)) ){
-        $search_results = Advertisement::where([
-            ['city_id', '=', $request->city_id],
-            ['type', '=', $request->type],
-            ["bedroom_num","=",$request->bedroom_num],
-            ["status", "not rented"],["control", "accepted"]
-        ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
-        return response()->json($search_results);
+        
+        }elseif(((($request->city_all)=="all")&&(($request->type_all)=="all")&&(($request->bedroom_num_all)=="all")) ){
+                    $search_results = Advertisement::where([
+                       
+                       
+                       
+                        ["status", "not rented"],["control", "accepted"]
+                    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+                    return response()->json($search_results);
+            
+            
+        }elseif((($request->city_id)&&(($request->type_all)=="all")&&($request->bedroom_num)) ){
+                        $search_results = Advertisement::where([
+                            ['city_id', '=', $request->city_id],
+                           
+                            ["bedroom_num","=",$request->bedroom_num],
+                            ["status", "not rented"],["control", "accepted"]
+                        ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+                        return response()->json($search_results);
+                
+                
+        }elseif((($request->city_id)&&(($request->type_all)=="all")&&(($request->bedroom_num_all)=="all")) ){
+                            $search_results = Advertisement::where([
+                                ['city_id', '=', $request->city_id],
+                               
+                               
+                                ["status", "not rented"],["control", "accepted"]
+                            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+                            return response()->json($search_results);
+                    
+                    
+        }elseif((($request->city_id)&&($request->type)&&(($request->bedroom_num_all)=="all")) ){
+                                $search_results = Advertisement::where([
+                                    ['city_id', '=', $request->city_id],
+                                    ['type', '=', $request->type],
+                                   
+                                    ["status", "not rented"],["control", "accepted"]
+                                ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+                                return response()->json($search_results);
+                        
+                        
+        }elseif(((($request->city_all)== "all") &&($request->type)) ){
+            $search_results = Advertisement::where([
+               
+                ['type', '=', $request->type],
+               
+                ["status", "not rented"],["control", "accepted"]
+            ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+            return response()->json($search_results);
+    
+    
+}
+elseif((($request->city_all) == "all")&&($request->bedroom_num)){
+    $search_results = Advertisement::where([
+  
+        ["bedroom_num","=",$request->bedroom_num],
+
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
 
 
-        }elseif(($request->city_id)&&($request->type)){  
+}elseif(((($request->city_all) == "all"))){
+    $search_results = Advertisement::where([
+       
+       
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif((($request->city_id)&&(($request->type_all)=="all")) ){
+    $search_results = Advertisement::where([
+        ['city_id', '=', $request->city_id],
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif(((($request->type_all)=="all")&&($request->bedroom_num)) ){
+    $search_results = Advertisement::where([
+       
+        ["bedroom_num","=",$request->bedroom_num],
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif(((($request->type_all)=="all")) ){
+    $search_results = Advertisement::where([
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif((($request->type)&&(($request->bedroom_num_all)=="all")) ){
+    $search_results = Advertisement::where([
+        ['type', '=', $request->type],
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif((($request->city_id)&&(($request->bedroom_num_all)=="all")) ){
+    $search_results = Advertisement::where([
+        ['city_id', '=', $request->city_id],
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif(((($request->bedroom_num_all)=="all")) ){
+    $search_results = Advertisement::where([
+       
+       
+        ["status", "not rented"],["control", "accepted"]
+    ])->withCount('ratings')->withAvg("ratings", "count")->with("advertisement_image")->get();
+    return response()->json($search_results);
+
+
+}elseif(($request->city_id)&&($request->type)){  
 
             $search_results =  Advertisement::where([
                 ['city_id', '=', $request->city_id],
@@ -169,7 +237,7 @@ class SearchController extends Controller
 
     }
 
-    }
+    
 
 
 public function city_choices(){
