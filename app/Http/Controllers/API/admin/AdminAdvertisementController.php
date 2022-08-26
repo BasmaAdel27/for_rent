@@ -24,6 +24,12 @@ class AdminAdvertisementController extends Controller
 
     }
 
+    public  function showPending($id)
+    {
+        $advertisement = Advertisement::where([['id', $id], ['control', 'pending']])->with('advertisement_image', 'user')->get();
+        return response()->json([ 'advertisement' => $advertisement]);
+    }
+
     public function acceptedRequest(){
         $advertisements=Advertisement::where('control','accepted')->with('user')->get();
         if($advertisements->isEmpty()) {

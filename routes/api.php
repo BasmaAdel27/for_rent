@@ -77,6 +77,7 @@ Route::middleware(['checkRole:admin,superAdmin','auth:api'])->group(function () 
     Route::post('/update/about/image/{id}',[AdminAboutController::class,'updateImage']);
     Route::get('/edit/about/{id}',[AdminAboutController::class,'edit']);
     Route::get('/edit/followUs/{id}',[AdminFollowUsController::class,'edit']);
+    Route::get('/show/pending/{id}',[AdminAdvertisementController::class,'showPending']);
 
 
 });
