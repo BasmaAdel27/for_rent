@@ -112,6 +112,7 @@ Route::middleware(['renter','auth:api'])->group(function () {
     Route::post('/paymentmethod',[PaymentController::class,'payment']);
     Route::get('/renter/advertisementrented',[PaymentController::class,'renterPayment']);
     Route::get('/renter/myfavourite',[FavouriteController::class,'index']);
+    Route::delete('/renter/delete/{id}',[PaymentController::class,'destroy']);
 
 
 

@@ -79,9 +79,9 @@ class PaymentController extends Controller
         $payment_notf_data = [
 
             "message" => "تم الدفع من خلال الموقع من المستاجر" . ': '. $renter_name . "  ". " للعقار : " . $advertisement->title ,
-            
+
             "owner_id"=> $owner_id,
-           
+
         ];
         event(new PaymentNotification( $payment_notf_data ));
         $notification = New Notification ;
@@ -95,7 +95,7 @@ class PaymentController extends Controller
 
         return  response()->json(['success'=>true,'advertisement'=>$advertisement,'payment'=>$payment]);
     }
-   
+
 
 
 
@@ -182,6 +182,7 @@ class PaymentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Paymentmethod::find($id)->delete();
+        return response()->json(['message'=>'تم المسح بنجاح']);
     }
 }
