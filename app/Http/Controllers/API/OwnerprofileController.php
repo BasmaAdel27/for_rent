@@ -22,14 +22,11 @@ class OwnerprofileController extends Controller
     public function index()
     {
         $user = Auth::user();
+       $pending =$user->advertisement()->whereControl("pending")->with("city")->get();
+       $declined =$user->advertisement()->whereControl("declined")->with("city")->get();
 
-       $pending =$user->advertisement()->whereControl("pending")->get();
-       $declined =$user->advertisement()->whereControl("declined")->get();
-
-    $accepted_not_rented = $user->advertisement()->where('control', 'accepted')->get();
-    $accepted_not_rented =  $accepted_not_rented->where('status', 'not rented');
+    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'],['status', 'not rented']])->with("city")->get();
  
-    
 
 return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"pending"=>$pending , "declined"=> $declined] ,200);
 
@@ -42,8 +39,8 @@ return response()->json(["accepted-not-rented"=>$accepted_not_rented ,"pending"=
         $user = User::find($id);
 
 
-    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->with("advertisement_image")->withAvg("ratings", "count")->withCount('ratings')->get();
-    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']])->with("advertisement_image")->withAvg("ratings", "count")->withCount('ratings')->get();
+    $accepted_not_rented = $user->advertisement()->where([['control', 'accepted'], ['status', 'not rented']])->with("city")->with("advertisement_image")->withAvg("ratings", "count")->withCount('ratings')->get();
+    $accepted_rented =  $user->advertisement()->where([['control', 'accepted'], ['status', 'rented']])->with("city")->with("advertisement_image")->withAvg("ratings", "count")->withCount('ratings')->get();
  
     
 
