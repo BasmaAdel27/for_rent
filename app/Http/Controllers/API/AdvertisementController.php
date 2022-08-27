@@ -253,7 +253,8 @@ class AdvertisementController extends Controller
             $advs_owner = Advertisement::where([['status', 'not rented'], ['control', 'accepted'], ['user_id', $advertisement_id->user_id]])->get();
             $adv_suggestion = Advertisement::where('id', '<>', $advertisement_id->id)->withAvg('ratings', 'count')->withCount('ratings')
                 ->where([['city_id', $advertisement_id->city_id], ['status', 'not rented'], ['control', 'accepted'], ['type', $advertisement_id->type]])->with('advertisement_image')->get();
-            return response()->json(['favourite'=>false,'advertisement' => $advertisement, 'reviews' => $rating, 'reviews_num' => count($rating), 'reviews_avg' => $rating->avg('count'), 'advertisement_num' => count($advs_owner), 'suggestion' => $adv_suggestion]);
+            $city_name=City::where('id',$advertisement_id->city_id)->first('name');
+            return response()->json(['favourite'=>false,'advertisement' => $advertisement, 'reviews' => $rating,'city'=>$city_name, 'reviews_num' => count($rating), 'reviews_avg' => $rating->avg('count'), 'advertisement_num' => count($advs_owner), 'suggestion' => $adv_suggestion]);
         }
 
 

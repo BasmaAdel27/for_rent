@@ -24,10 +24,13 @@ class AdminAdvertisementController extends Controller
 
     }
 
-    public  function showPending($id)
+    public  function showPending(Advertisement $id)
     {
-        $advertisement = Advertisement::where([['id', $id], ['control', 'pending']])->with('advertisement_image', 'user')->get();
-        return response()->json([ 'advertisement' => $advertisement]);
+        $advertisement = Advertisement::where([['id', $id->id], ['control', 'pending']])->with('advertisement_image', 'user')->get();
+
+        $city_name=City::where('id',$id->id)->first('name');
+
+        return response()->json([ 'advertisement' => $advertisement,'city'=>$city_name]);
     }
 
     public function acceptedRequest(){
