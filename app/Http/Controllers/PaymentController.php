@@ -7,6 +7,14 @@ use App\Models\Payment;
 use App\Models\Paymentmethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\PaymentNotification;
+use App\Models\Notification;
+use Illuminate\Support\Carbon;
+
+
+
+use App\Models\User;
+
 use Stripe\Charge;
 use Stripe\Stripe;
 
@@ -62,7 +70,7 @@ class PaymentController extends Controller
         $advertisement->status='rented';
         $advertisement->save();
         
-        //start payment notification
+        // //start payment notification
         $user_id = Auth::user()->id;
         $owner_id = $request->owner_id;
         $user = User::find($user_id);
@@ -75,6 +83,13 @@ class PaymentController extends Controller
            
         ];
         event(new PaymentNotification( $payment_notf_data ));
+        $notification = New Notification ;
+        $notification->user_id =  $owner_id;    //ADMIN ID
+        $notification->advertisement_id = $advertisement->id;
+        $notification->content = $payment_notf_data["message"];
+        $notification->status = "not_red";
+        $notification->sent_at =carbon::now();
+        $notification->save();
 
         return  response()->json(['success'=>true,'advertisement'=>$advertisement,'payment'=>$payment]);
     }

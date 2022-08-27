@@ -23,7 +23,9 @@ class PaymentNotification implements ShouldBroadcast
     public $owner_id;
     public function __construct( $payment_notf_data )
     {
-        //
+        $this->message = $payment_notf_data["message"];
+        $this->owner_id = $payment_notf_data["owner_id"];
+
     }
 
     /**
