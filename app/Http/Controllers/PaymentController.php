@@ -8,6 +8,13 @@ use App\Models\Paymentmethod;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\PaymentNotification;
+use App\Models\Notification;
+
+
+
+use App\Models\User;
+
 use Stripe\Charge;
 use Stripe\Stripe;
 
@@ -63,10 +70,32 @@ class PaymentController extends Controller
         $advertisement=Advertisement::where([['id',$payment->advertisement_id],['control','accepted'],['user_id',$payment->owner_id]])->first();
         $advertisement->status='rented';
         $advertisement->save();
-        //start payment notification
+
+         //start payment notification
+        $user_id = Auth::user()->id;
+        $owner_id = $request->owner_id;
+        $user = User::find($user_id);
+        $renter_name = $user->name;
+        $payment_notf_data = [
+
+            "message" => "تم الدفع من خلال الموقع من المستاجر" . ': '. $renter_name . "  ". " للعقار : " . $advertisement->title ,
+            
+            "owner_id"=> $owner_id,
+           
+        ];
+        event(new PaymentNotification( $payment_notf_data ));
+        $notification = New Notification ;
+        $notification->user_id =  $owner_id;    //ADMIN ID
+        $notification->advertisement_id = $advertisement->id;
+        $notification->content = $payment_notf_data["message"];
+        $notification->status = "not_red";
+        $notification->sent_at =carbon::now();
+        $notification->save();
+
 
         return  response()->json(['success'=>true,'advertisement'=>$advertisement,'payment'=>$payment]);
     }
+   
 
 
 

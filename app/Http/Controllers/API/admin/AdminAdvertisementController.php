@@ -104,17 +104,6 @@ class AdminAdvertisementController extends Controller
         if ($advertisement->control == 'pending'){
             $advertisement->control='declined';
             $advertisement->save();
-
-
-            $reject_advertisement_data = [
-
-                "message"=>'تم رفض الاعلان '.' : '. $advertisement->title,
-                'advertisement'=>$advertisement->title,
-                "user_id"=>$advertisement->user_id,
-                "time" => carbon::now()
-            ];
-            event(new RejectAdvertisement($reject_advertisement_data ));
-
             return response()->json(['message'=>'تم رفض الاعلان بنجاح','advertisement'=>$advertisement]);
         }
     }
