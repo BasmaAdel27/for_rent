@@ -39,6 +39,7 @@ class PaymentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function payment(Request $request)
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
