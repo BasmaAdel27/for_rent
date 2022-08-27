@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Advertisement;
 use App\Models\Payment;
 use App\Models\Paymentmethod;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Charge;
@@ -47,16 +48,17 @@ class PaymentController extends Controller
             "source" => $request->token,
             "description" => "Test payment for booking "
         ]);
-        if (Paymentmethod::where([['advertisement_id',$request->adver_id],['user_id',Auth::user()->id]])->exists()){
-            $result=Paymentmethod::where([['advertisement_id',$request->adver_id],['user_id',Auth::user()->id]])->delete();
-        }
+
         $payment=Paymentmethod::create([
             'user_id'=>Auth::user()->id,
             'owner_id'=>$request->owner_id,
             'advertisement_id'=>$request->adver_id,
-            'amount'=>$request->price
-        ]);
+            'amount'=>$request->price,
 
+        ]);
+       $payment->created_at=Carbon::now()->toDateString();
+        $payment->expired_at=Carbon::now()->addDays(30)->toDateString();
+        $payment->save();
         $advertisement=Advertisement::where([['id',$payment->advertisement_id],['control','accepted'],['user_id',$payment->owner_id]])->first();
         $advertisement->status='rented';
         $advertisement->save();
@@ -76,10 +78,12 @@ class PaymentController extends Controller
         }else{
             $advertisements=[];
             foreach ($data as $value){
-                $advertisements[]=Advertisement::where('id',$value->advertisement_id)->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
 
+                $advertisements[]=Advertisement::where('id',$value->advertisement_id)->where('status','rented')->with('payment')->withCount('ratings')->withAvg("ratings", "count")->with('favourit',"advertisement_image")->get();
+                $date=date('d-m-Y', strtotime($value->created_at));
+                $expire=date('d-m-Y', strtotime($value->expired_at));
             }
-            return response()->json(["allAdvertisements" => $advertisements,'count'=>count($advertisements)]);
+            return response()->json(["allAdvertisements" => $advertisements,'date'=>$date,'expired'=>$expire,'count'=>count($advertisements)]);
 
         }
     }
