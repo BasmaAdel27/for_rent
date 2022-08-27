@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Favourit;
+use App\Models\Paymentmethod;
 use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -378,12 +379,18 @@ class AdvertisementController extends Controller
         $advertisement->save();
         //update image
         $advertisement = Advertisement::find($id);
+        if($advertisement->status == "not rented"){
+            if(Paymentmethod::where('advertisement_id',$id)->where('owner_id',Auth::user()->id)->get()){
+                $delete=Paymentmethod::where('advertisement_id',$id)->where('owner_id',Auth::user()->id)->delete();
+            }
+        }
+
 //    if( ($request->file('image_name'))){
 //        $advertisement->advertisement_image()->delete();
 //        $photos = $request->file('image_name');
 //
 //
-//
+
 //
 //        foreach ($photos as $photo) {
 //
@@ -416,7 +423,7 @@ class AdvertisementController extends Controller
     {
         $advertisement = Advertisement::find($id);
         if((Auth::user()->type)=="owner"&& (($advertisement->user_id) == (Auth::user()->id)) ){
-            $advertisement->delete();
+            $advertisement->forceDelete();
             return response()->json("تم المسح بنجاح");
 
 
