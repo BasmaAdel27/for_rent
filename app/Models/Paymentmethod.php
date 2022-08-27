@@ -9,7 +9,7 @@ class Paymentmethod extends Model
 {
     use HasFactory;
     protected $fillable=[
-        'advertisement_id','user_id','owner_id','amount'
+        'advertisement_id','user_id','owner_id','amount','expired_at'
     ];
     public function owner(){
         return $this->belongsTo(User::class,'owner_id','id');
